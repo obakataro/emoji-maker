@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord絵文字ジェネレーター</title>
+    <title>Discord絵文字ジェネレーター Pro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800;900&family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+Rounded+1c:wght@800&family=Noto+Sans+JP:wght@900&family=Reggae+One&family=RocknRoll+One&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-color: #2b2d31; /* Discord背景に近い色 */
-            --discord-dark: #313338; /* Discordチャット背景 */
+            --bg-color: #2b2d31;
+            --discord-dark: #313338;
+            --panel-bg: #1e1f22;
+            --border: #444;
             --accent: #5865F2;
             --text: #f2f3f5;
+            --text-muted: #b5bac1;
         }
 
         body {
@@ -29,216 +32,243 @@
 
         .container {
             display: grid;
-            grid-template-columns: 1fr 300px;
+            grid-template-columns: 350px 1fr;
             gap: 20px;
-            max-width: 900px;
+            max-width: 1000px;
             width: 100%;
-            background: #1e1f22;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 800px) {
             .container { grid-template-columns: 1fr; }
         }
 
-        h1 { margin-top: 0; font-size: 1.2rem; grid-column: 1 / -1; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        h1 { grid-column: 1 / -1; margin: 0 0 10px 0; font-size: 1.4rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 
-        /* 設定パネル */
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        /* 左カラム：設定 */
+        .controls { display: flex; flex-direction: column; gap: 15px; }
 
         .control-group {
-            background: #2b2d31;
-            padding: 10px;
-            border-radius: 4px;
+            background: var(--panel-bg);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #333;
         }
         
-        .control-group label {
-            display: block;
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-            color: #b5bac1;
-        }
+        .control-group h3 { margin: 0 0 10px 0; font-size: 0.95rem; color: var(--text-muted); border-bottom: 1px solid #333; padding-bottom: 5px; }
 
-        input[type="text"], select {
+        label { display: block; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-muted); }
+        
+        textarea, select, input[type="text"], input[type="number"] {
             width: 100%;
-            padding: 8px;
-            background: #1e1f22;
-            border: 1px solid #444;
+            background: #111214;
+            border: 1px solid var(--border);
             color: white;
+            padding: 8px;
             border-radius: 4px;
             box-sizing: border-box;
+            font-family: inherit;
         }
+        textarea { resize: vertical; min-height: 60px; }
 
-        input[type="range"] { width: 100%; cursor: pointer; }
-        
         .row { display: flex; gap: 10px; align-items: center; }
-        .checkbox-label { display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 0.9rem; }
+        .full-width { width: 100%; }
 
-        /* プレビューエリア */
+        /* スライダー */
+        input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--accent); }
+
+        /* 多重縁取りリスト */
+        #strokeList { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        .stroke-item {
+            display: flex; gap: 5px; align-items: center;
+            background: #2b2d31; padding: 5px; border-radius: 4px;
+        }
+        .stroke-item input[type="color"] { width: 30px; height: 30px; border: none; padding: 0; background: none; cursor: pointer; }
+        .btn-sm {
+            padding: 4px 8px; font-size: 0.8rem; background: #444; border: none; color: white; border-radius: 3px; cursor: pointer;
+        }
+        .btn-add { background: var(--accent); width: 100%; padding: 8px; color: white; border:none; border-radius: 4px; cursor: pointer;}
+        .btn-remove { background: #d83c3e; }
+
+        /* 右カラム：プレビュー */
         .preview-area {
+            background: var(--panel-bg);
+            padding: 20px;
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
             position: sticky;
             top: 20px;
+            height: fit-content;
         }
 
-        .canvas-wrapper {
+        .canvas-bg {
             background-image: 
-                linear-gradient(45deg, #222 25%, transparent 25%), 
-                linear-gradient(-45deg, #222 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #222 75%), 
-                linear-gradient(-45deg, transparent 75%, #222 75%);
+                linear-gradient(45deg, #2a2a2a 25%, transparent 25%), 
+                linear-gradient(-45deg, #2a2a2a 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #2a2a2a 75%), 
+                linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-            border: 1px solid #444;
-            display: inline-block;
+            border: 2px solid #555;
         }
+        canvas { display: block; }
 
-        canvas {
-            display: block; /* 余白除去 */
-        }
-
-        /* Discordプレビュー */
-        .discord-preview-box {
-            background-color: var(--discord-dark);
+        /* Discord Preview */
+        .discord-box {
+            background: var(--discord-dark);
             width: 100%;
             padding: 15px;
-            border-radius: 4px;
+            border-radius: 6px;
             box-sizing: border-box;
         }
-        .discord-label { font-size: 0.75rem; color: #949BA4; margin-bottom: 5px; }
+        .discord-msg { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+        .avatar { width: 40px; height: 40px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+        .msg-body { font-size: 0.95rem; line-height: 1.4; color: #dbdee1; }
+        .username { font-weight: bold; font-size: 0.9rem; color: white; margin-right: 5px; }
+        .timestamp { font-size: 0.7rem; color: #949BA4; }
         
-        .chat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .avatar { width: 40px; height: 40px; background: #5865F2; border-radius: 50%; }
-        .message-content { font-size: 0.9rem; color: #dbdee1; display: flex; align-items: center; gap: 5px; }
-
-        /* 実サイズ表示用 */
         .emoji-jumbo { width: 48px; height: 48px; object-fit: contain; }
-        .emoji-small { width: 32px; height: 32px; object-fit: contain; }
+        .emoji-inline { width: 22px; height: 22px; vertical-align: bottom; object-fit: contain; }
 
-        /* ボタン */
         .btn-download {
-            background-color: #248046;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
-            transition: background 0.2s;
+            background: #248046; color: white; font-weight: bold; padding: 15px; width: 100%; border: none; border-radius: 4px; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        .btn-download:hover { background-color: #1a6334; }
-
+        .btn-download:hover { background: #1a6334; }
+        
+        .file-input-wrapper { margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Discord 絵文字メーカー (128x128)</h1>
+    <h1>Discord 絵文字ジェネレーター Pro</h1>
 
     <div class="controls">
+        
         <div class="control-group">
-            <label>テキスト (改行は自動調整されません)</label>
-            <input type="text" id="textInput" value="神" placeholder="文字を入力">
-        </div>
-
-        <div class="control-group">
-            <label>フォント & サイズ</label>
-            <select id="fontFamily">
-                <option value="'Noto Sans JP', sans-serif">Noto Sans JP (ゴシック)</option>
-                <option value="'M PLUS Rounded 1c', sans-serif">M PLUS Rounded (丸文字)</option>
-                <option value="sans-serif">標準ゴシック</option>
-                <option value="serif">標準明朝</option>
-                <option value="Arial Black, Impact, sans-serif">Impact/太字欧文</option>
-            </select>
+            <h3>文字入力 (自動圧縮・改行対応)</h3>
+            <textarea id="textInput" placeholder="改行で&#10;2行に&#10;なります">見切れ&#10;ないよ</textarea>
+            
             <div class="row" style="margin-top:10px;">
-                <input type="range" id="fontSize" min="10" max="120" value="100">
-                <span id="fontSizeVal">100px</span>
+                <div class="full-width">
+                    <label>フォント選択</label>
+                    <select id="fontFamily">
+                        <option value="'Noto Sans JP', sans-serif">Noto Sans JP (極太ゴシック)</option>
+                        <option value="'RocknRoll One', sans-serif">RocknRoll One (ポップ)</option>
+                        <option value="'Reggae One', serif">Reggae One (劇画風)</option>
+                        <option value="'DotGothic16', sans-serif">DotGothic16 (ドット絵)</option>
+                        <option value="'M PLUS Rounded 1c', sans-serif">M PLUS Rounded (丸文字)</option>
+                        <option value="Impact, sans-serif">Impact (欧文)</option>
+                    </select>
+                </div>
             </div>
-            <div class="row" style="margin-top:5px;">
-                <label>垂直位置:</label>
-                <input type="range" id="offsetY" min="-64" max="64" value="0">
+            
+            <div class="file-input-wrapper">
+                <label>手持ちフォントを追加 (.ttf/.woff)</label>
+                <input type="file" id="fontUpload" accept=".ttf,.otf,.woff,.woff2">
             </div>
-        </div>
 
-        <div class="control-group">
-            <label class="checkbox-label">
-                <input type="checkbox" id="useGradient" checked> グラデーションを使用
-            </label>
-            <div class="row" style="margin-top:5px;">
-                <input type="color" id="color1" value="#FF0055">
-                <span>～</span>
-                <input type="color" id="color2" value="#FFCC00">
+            <div class="row" style="margin-top:10px;">
+                <div class="full-width">
+                    <label>基本サイズ: <span id="sizeVal">100</span>px</label>
+                    <input type="range" id="fontSize" min="20" max="150" value="100">
+                </div>
             </div>
-            <div class="row" style="margin-top:5px;">
-                <label>角度:</label>
-                <input type="range" id="gradAngle" min="0" max="360" value="90">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="checkbox-label">
-                <input type="checkbox" id="useStroke" checked> 縁取り (Stroke)
-            </label>
             <div class="row">
-                <input type="color" id="strokeColor" value="#FFFFFF">
-                <input type="range" id="strokeWidth" min="0" max="20" value="8">
+                <div class="full-width">
+                    <label>行間 (Line Height)</label>
+                    <input type="range" id="lineHeight" min="0.5" max="2.0" step="0.1" value="1.0">
+                </div>
+            </div>
+            <div class="row">
+                <div class="full-width">
+                    <label>垂直位置調整</label>
+                    <input type="range" id="offsetY" min="-64" max="64" value="0">
+                </div>
             </div>
         </div>
 
         <div class="control-group">
-            <label class="checkbox-label">
-                <input type="checkbox" id="useShadow" checked> 影 (Shadow)
-            </label>
-            <div class="row">
+            <h3>文字色 (Fill)</h3>
+            <label><input type="checkbox" id="useGradient" checked> グラデーションを使用</label>
+            <div class="row" style="margin-top:5px;">
+                <input type="color" id="color1" value="#FF0055" title="上/開始色">
+                <span style="font-size:0.8rem;">To</span>
+                <input type="color" id="color2" value="#FFCC00" title="下/終了色">
+                <input type="range" id="gradAngle" min="0" max="360" value="90" title="角度">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>多重縁取り (Stroke Layers)</h3>
+            <div style="font-size:0.75rem; color:#aaa; margin-bottom:5px;">上が内側、下が外側になります</div>
+            <div id="strokeList">
+                </div>
+            <button class="btn-add" id="addStrokeBtn">+ 縁取りを追加</button>
+        </div>
+
+        <div class="control-group">
+            <h3>影 (Shadow)</h3>
+            <label><input type="checkbox" id="useShadow" checked> ドロップシャドウ</label>
+            <div class="row" style="margin-top:5px;">
                 <input type="color" id="shadowColor" value="#000000">
-                <input type="range" id="shadowBlur" min="0" max="20" value="5">
+                <div class="full-width">
+                    <label>ぼかし</label>
+                    <input type="range" id="shadowBlur" min="0" max="20" value="4">
+                </div>
             </div>
-            <div class="row" style="margin-top:5px;">
-                <label>距離:</label>
-                <input type="range" id="shadowOffset" min="0" max="20" value="4">
+            <div class="row">
+                <div class="full-width">
+                    <label>距離 X</label>
+                    <input type="range" id="shadowX" min="-20" max="20" value="4">
+                </div>
+                <div class="full-width">
+                    <label>距離 Y</label>
+                    <input type="range" id="shadowY" min="-20" max="20" value="4">
+                </div>
             </div>
         </div>
+
     </div>
 
     <div class="preview-area">
-        <div class="canvas-wrapper">
+        <div class="canvas-bg">
             <canvas id="canvas" width="128" height="128"></canvas>
         </div>
-        <div style="font-size:0.8rem; color:#aaa;">Original: 128x128 px</div>
+        <div style="font-size:0.8rem; color:#aaa;">128x128 px (256KB制限対応)</div>
 
-        <div class="discord-preview-box">
-            <div class="discord-label">Discord Preview (Dark Theme)</div>
+        <div class="discord-box">
+            <div style="font-size:0.75rem; color:#949BA4; margin-bottom:10px;">プレビュー</div>
             
-            <div class="chat-row">
+            <div class="discord-msg">
                 <div class="avatar"></div>
-                <div class="message-content">
+                <div class="msg-body">
+                    <div>
+                        <span class="username">User</span>
+                        <span class="timestamp">今日 12:34</span>
+                    </div>
                     <img id="previewJumbo" class="emoji-jumbo" src="">
-                    <span>(単体送信)</span>
                 </div>
             </div>
-            
-            <div class="chat-row">
+
+            <div class="discord-msg">
                 <div class="avatar"></div>
-                <div class="message-content">
-                    <span>文章の中に</span>
-                    <img id="previewSmall" class="emoji-small" src="">
-                    <span>を入れる</span>
+                <div class="msg-body">
+                    <div>
+                        <span class="username">User</span>
+                        <span class="timestamp">今日 12:35</span>
+                    </div>
+                    <div>
+                        これは<img id="previewInline" class="emoji-inline" src="">便利なツールですね
+                    </div>
                 </div>
             </div>
         </div>
 
-        <button class="btn-download" id="downloadBtn">透過PNGを保存 (DL)</button>
+        <button class="btn-download" id="downloadBtn">画像を保存 (PNG)</button>
     </div>
 </div>
 
@@ -246,12 +276,14 @@
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    // UI要素の取得
-    const inputs = {
+    // UI参照
+    const ui = {
         text: document.getElementById('textInput'),
         font: document.getElementById('fontFamily'),
+        fontUpload: document.getElementById('fontUpload'),
         size: document.getElementById('fontSize'),
-        sizeVal: document.getElementById('fontSizeVal'),
+        sizeVal: document.getElementById('sizeVal'),
+        lineHeight: document.getElementById('lineHeight'),
         offsetY: document.getElementById('offsetY'),
         
         useGradient: document.getElementById('useGradient'),
@@ -259,113 +291,260 @@
         color2: document.getElementById('color2'),
         gradAngle: document.getElementById('gradAngle'),
 
-        useStroke: document.getElementById('useStroke'),
-        strokeColor: document.getElementById('strokeColor'),
-        strokeWidth: document.getElementById('strokeWidth'),
+        strokeList: document.getElementById('strokeList'),
+        addStrokeBtn: document.getElementById('addStrokeBtn'),
 
         useShadow: document.getElementById('useShadow'),
         shadowColor: document.getElementById('shadowColor'),
         shadowBlur: document.getElementById('shadowBlur'),
-        shadowOffset: document.getElementById('shadowOffset')
+        shadowX: document.getElementById('shadowX'),
+        shadowY: document.getElementById('shadowY')
     };
 
     const previews = {
         jumbo: document.getElementById('previewJumbo'),
-        small: document.getElementById('previewSmall')
+        inline: document.getElementById('previewInline')
     };
 
-    // 描画関数
+    // 縁取りデータの管理（初期値：白の縁取り）
+    let strokes = [
+        { color: '#FFFFFF', width: 8 },
+        { color: '#000000', width: 4 } // デフォルトで二重縁取りにしておく
+    ];
+
+    // --- 機能：フォントアップロード ---
+    ui.fontUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const fontName = 'UploadedFont_' + Date.now();
+            const fontFace = new FontFace(fontName, evt.target.result);
+            
+            fontFace.load().then((loadedFace) => {
+                document.fonts.add(loadedFace);
+                
+                // セレクトボックスに追加して選択
+                const option = document.createElement('option');
+                option.text = `📂 ${file.name}`;
+                option.value = fontName;
+                ui.font.add(option, 0); // 先頭に追加
+                ui.font.selectedIndex = 0;
+                
+                draw();
+            }).catch(err => {
+                alert('フォントの読み込みに失敗しました: ' + err);
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    // --- 機能：多重縁取りUI ---
+    function renderStrokeList() {
+        ui.strokeList.innerHTML = '';
+        strokes.forEach((stroke, index) => {
+            const div = document.createElement('div');
+            div.className = 'stroke-item';
+            div.innerHTML = `
+                <span style="font-size:0.8rem; color:#aaa;">#${index+1}</span>
+                <input type="color" value="${stroke.color}" oninput="updateStroke(${index}, 'color', this.value)">
+                <input type="range" min="0" max="30" value="${stroke.width}" oninput="updateStroke(${index}, 'width', this.value)" style="width:80px;">
+                <button class="btn-sm btn-remove" onclick="removeStroke(${index})">×</button>
+            `;
+            ui.strokeList.appendChild(div);
+        });
+        draw();
+    }
+
+    window.updateStroke = (index, key, value) => {
+        strokes[index][key] = key === 'width' ? parseInt(value) : value;
+        draw();
+    };
+
+    window.removeStroke = (index) => {
+        strokes.splice(index, 1);
+        renderStrokeList();
+    };
+
+    ui.addStrokeBtn.addEventListener('click', () => {
+        // 前のレイヤーと同じ設定で追加（使いやすさのため）
+        const last = strokes[strokes.length - 1] || { color: '#000000', width: 5 };
+        strokes.push({ color: last.color === '#FFFFFF' ? '#000000' : '#FFFFFF', width: 5 });
+        renderStrokeList();
+    });
+
+    // --- メイン描画処理 ---
     function draw() {
-        // キャンバスをクリア（透明にする）
+        // キャンバスクリア
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // 設定値の取得
-        const text = inputs.text.value;
-        const fontSize = parseInt(inputs.size.value);
-        const fontFamily = inputs.font.value;
-        const centerX = canvas.width / 2;
-        const centerY = (canvas.height / 2) + parseInt(inputs.offsetY.value);
+        const text = ui.text.value;
+        const lines = text.split('\n'); // 改行で分割
+        const baseSize = parseInt(ui.size.value);
+        const fontFamily = ui.font.value;
+        const lineHeightScale = parseFloat(ui.lineHeight.value);
+        const offsetY = parseInt(ui.offsetY.value);
 
-        inputs.sizeVal.textContent = fontSize + 'px';
+        ui.sizeVal.textContent = baseSize;
 
         // フォント設定
-        ctx.font = `900 ${fontSize}px ${fontFamily}`; // 常に太字(900)を指定
+        ctx.font = `900 ${baseSize}px ${fontFamily}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 2; // トゲトゲ防止
 
-        // 1. 影の描画 (テキスト描画前に設定)
-        ctx.save();
-        if (inputs.useShadow.checked) {
-            ctx.shadowColor = inputs.shadowColor.value;
-            ctx.shadowBlur = parseInt(inputs.shadowBlur.value);
-            ctx.shadowOffsetX = parseInt(inputs.shadowOffset.value);
-            ctx.shadowOffsetY = parseInt(inputs.shadowOffset.value);
-        } else {
-            ctx.shadowColor = 'transparent';
+        // 全体の高さ計算（垂直中央寄せのため）
+        const totalHeight = lines.length * baseSize * lineHeightScale;
+        const startY = (canvas.height - totalHeight) / 2 + (baseSize * lineHeightScale / 2) + offsetY;
+
+        // 描画関数（モード：shadow, stroke, fill）
+        // strokeIndexは縁取りの時に使う
+        const renderText = (mode, strokeIndex = -1) => {
+            lines.forEach((line, i) => {
+                if (!line) return; // 空行スキップ
+
+                const y = startY + (i * baseSize * lineHeightScale);
+                const centerX = canvas.width / 2;
+
+                // --- 自動圧縮 (Squeeze) ロジック ---
+                // テキストの幅を計測
+                const metrics = ctx.measureText(line);
+                const textWidth = metrics.width;
+                const maxW = 120; // 余白を少し残す
+
+                let scaleX = 1;
+                // 縁取りがある場合、その分幅が広がるので考慮する
+                let maxStroke = 0;
+                strokes.forEach(s => maxStroke += s.width);
+                const realWidth = textWidth + (maxStroke * 2);
+
+                if (realWidth > maxW) {
+                    scaleX = maxW / realWidth;
+                }
+
+                ctx.save();
+                ctx.translate(centerX, y);
+                if (scaleX < 1) {
+                    ctx.scale(scaleX, 1); // 横だけ潰す
+                }
+
+                if (mode === 'shadow') {
+                    ctx.shadowColor = ui.shadowColor.value;
+                    ctx.shadowBlur = parseInt(ui.shadowBlur.value);
+                    ctx.shadowOffsetX = parseInt(ui.shadowX.value);
+                    ctx.shadowOffsetY = parseInt(ui.shadowY.value);
+                    // 影専用に塗りつぶし（色は関係ないが形を作るため）
+                    ctx.fillStyle = 'black'; 
+                    
+                    // 縁取りがある場合は、一番太い縁取りの形に影を落とすのが自然
+                    if (strokes.length > 0) {
+                        // 全縁取り幅の合計
+                        let totalWidth = 0;
+                        strokes.forEach(s => totalWidth += s.width);
+                        ctx.lineWidth = totalWidth * 2;
+                        ctx.strokeText(line, 0, 0);
+                        // 中も埋める
+                        ctx.fillText(line, 0, 0);
+                    } else {
+                        ctx.fillText(line, 0, 0);
+                    }
+
+                } else if (mode === 'stroke') {
+                    // 多重縁取りのロジック:
+                    // 外側の縁取りを描くには、「それより内側の縁取り幅の合計 + 自分の幅」で描画し、
+                    // 後から内側が上書きされることで層に見える（Painter's Algorithm）
+                    
+                    const currentStroke = strokes[strokeIndex];
+                    
+                    // 自分より「内側」（リストの上位）にある縁取りの幅を合計する
+                    // リスト順: 0(内) -> N(外)
+                    // 描画順: N(外) -> 0(内) と回しているので、
+                    // 今描画しているstrokeIndexより小さいインデックスのwidthを足す
+                    let innerWidths = 0;
+                    for(let j=0; j < strokeIndex; j++) {
+                        innerWidths += strokes[j].width;
+                    }
+
+                    // 線の太さ = (内側の幅合計 + 自分の幅) * 2 (半径->直径)
+                    ctx.strokeStyle = currentStroke.color;
+                    ctx.lineWidth = (innerWidths + currentStroke.width) * 2;
+                    ctx.strokeText(line, 0, 0);
+
+                } else if (mode === 'fill') {
+                    if (ui.useGradient.checked) {
+                        const angle = parseInt(ui.gradAngle.value) * (Math.PI / 180);
+                        const dist = baseSize; 
+                        // グラデーション座標計算 (簡易)
+                        const x1 = -Math.cos(angle) * dist/2;
+                        const y1 = -Math.sin(angle) * dist/2;
+                        const x2 = Math.cos(angle) * dist/2;
+                        const y2 = Math.sin(angle) * dist/2;
+                        
+                        const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+                        grad.addColorStop(0, ui.color1.value);
+                        grad.addColorStop(1, ui.color2.value);
+                        ctx.fillStyle = grad;
+                    } else {
+                        ctx.fillStyle = ui.color1.value;
+                    }
+                    ctx.fillText(line, 0, 0);
+                }
+
+                ctx.restore();
+            });
+        };
+
+        // 1. 影を描画
+        if (ui.useShadow.checked) {
+            ctx.save();
+            renderText('shadow');
+            ctx.restore();
         }
 
-        // 2. 縁取り (ストローク)
-        // 縁取りは影の影響を受けさせたくない場合は、影の後に描画するか、save/restoreで分ける
-        // ここでは「影付きの縁取り」にするため、そのまま描画します
-        if (inputs.useStroke.checked) {
-            ctx.strokeStyle = inputs.strokeColor.value;
-            ctx.lineWidth = parseInt(inputs.strokeWidth.value);
-            ctx.lineJoin = 'round'; // 角を丸く
-            ctx.strokeText(text, centerX, centerY);
-        }
-        ctx.restore(); // 影の設定をリセット（中身の描画に影を二重にかけないため）
-
-        // 3. 塗りつぶし (グラデーション or 単色)
-        if (inputs.useGradient.checked) {
-            // 簡易的な線形グラデーション（角度計算）
-            const angle = parseInt(inputs.gradAngle.value) * (Math.PI / 180);
-            const dist = 64; // 中心からの距離
-            const x1 = 64 - Math.cos(angle) * dist;
-            const y1 = 64 - Math.sin(angle) * dist;
-            const x2 = 64 + Math.cos(angle) * dist;
-            const y2 = 64 + Math.sin(angle) * dist;
-
-            const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
-            gradient.addColorStop(0, inputs.color1.value);
-            gradient.addColorStop(1, inputs.color2.value);
-            ctx.fillStyle = gradient;
-        } else {
-            ctx.fillStyle = inputs.color1.value;
+        // 2. 縁取りを描画（外側から順に描く＝リストの逆順）
+        // strokes配列: [0:内側, 1:外側...]
+        // 描画順: 外側(1) -> 内側(0)
+        for (let i = strokes.length - 1; i >= 0; i--) {
+            renderText('stroke', i);
         }
 
-        ctx.fillText(text, centerX, centerY);
+        // 3. 文字本体を描画
+        renderText('fill');
 
         updatePreviews();
     }
 
-    // プレビュー画像を更新
     function updatePreviews() {
-        const dataUrl = canvas.toDataURL('image/png');
-        previews.jumbo.src = dataUrl;
-        previews.small.src = dataUrl;
+        const url = canvas.toDataURL('image/png');
+        previews.jumbo.src = url;
+        previews.inline.src = url;
     }
 
-    // ダウンロード機能
+    // イベントリスナー
+    [ui.text, ui.font, ui.size, ui.lineHeight, ui.offsetY, 
+     ui.color1, ui.color2, ui.gradAngle, ui.useGradient, 
+     ui.shadowColor, ui.shadowBlur, ui.shadowX, ui.shadowY, ui.useShadow
+    ].forEach(el => {
+        el.addEventListener('input', draw);
+    });
+
+    // 初期化
+    renderStrokeList();
+    
+    // ダウンロード
     document.getElementById('downloadBtn').addEventListener('click', () => {
         const link = document.createElement('a');
-        const text = inputs.text.value || 'emoji';
-        link.download = `${text}_emoji.png`;
+        let name = ui.text.value.replace(/\n/g, '_').substring(0, 10) || 'emoji';
+        link.download = `${name}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
     });
 
-    // イベントリスナー登録
-    Object.values(inputs).forEach(input => {
-        input.addEventListener('input', draw);
-    });
-
-    // フォント読み込み待ち対策 (少し遅延させて再描画)
-    window.addEventListener('load', () => {
-        draw();
-        setTimeout(draw, 500); // フォントロード後の再描画用
-    });
+    // フォント読み込み待ち
+    window.addEventListener('load', () => setTimeout(draw, 500));
 
 </script>
-
 </body>
 </html>
