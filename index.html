@@ -3,326 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Emoji Generator Ultra</title>
-    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+Rounded+1c:wght@800&family=Noto+Sans+JP:wght@900&family=Reggae+One&family=RocknRoll+One&display=swap" rel="stylesheet">
+    <title>Discord Emoji Ultra - Improved</title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@900&family=Noto+Sans+JP:wght@900&family=Reggae+One&family=RocknRoll+One&family=Dela+Gothic+One&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #313338;
-            --panel: #2b2d31;
-            --input: #1e1f22;
-            --accent: #5865f2;
-            --success: #248046;
-            --text: #f2f3f5;
-            --muted: #b5bac1;
-        }
-
-        body {
-            font-family: 'Helvetica Neue', Arial, 'Noto Sans JP', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* レイアウト */
-        .sidebar {
-            width: 380px;
-            background: var(--panel);
-            border-right: 1px solid #1e1f22;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            overflow-y: auto;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-        }
-
-        .main-view {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            gap: 30px;
-            overflow-y: auto;
-        }
-
-        /* UI要素 */
-        .section {
-            background: var(--input);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        h3 { font-size: 0.8rem; text-transform: uppercase; color: var(--muted); margin: 0 0 12px 0; letter-spacing: 0.5px; }
-        
-        textarea {
-            width: 100%; height: 80px; background: var(--bg); border: 1px solid #111;
-            color: white; padding: 10px; border-radius: 4px; resize: none; font-size: 1rem; box-sizing: border-box;
-        }
-
-        .control-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-        .control-row label { font-size: 0.85rem; flex: 1; color: var(--muted); }
-        
-        input[type="range"] { flex: 2; accent-color: var(--accent); }
-        select, input[type="color"] { background: var(--bg); border: 1px solid #111; color: white; padding: 5px; border-radius: 4px; }
-
-        /* 縁取りリスト */
-        .stroke-item {
-            display: flex; align-items: center; gap: 8px; background: var(--panel);
-            padding: 8px; border-radius: 4px; margin-top: 5px; border: 1px solid #444;
-        }
-
-        /* プレビュー */
-        .canvas-container {
-            position: relative;
-            padding: 10px;
-            background: repeating-conic-gradient(#3a3a3a 0% 25%, #444 0% 50%) 50% / 20px 20px;
-            border: 4px solid var(--panel);
-            border-radius: 8px;
-        }
-
-        .discord-mockup {
-            background: var(--bg);
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #444;
-        }
-
-        .chat-msg { display: flex; gap: 15px; margin-bottom: 15px; }
-        .avatar { width: 40px; height: 40px; background: #7289da; border-radius: 50%; }
-        .msg-content { flex: 1; }
-        .user-info { font-weight: bold; margin-bottom: 4px; font-size: 0.9rem; }
-        .user-info span { font-weight: normal; color: var(--muted); font-size: 0.75rem; margin-left: 8px; }
-
-        .btn {
-            cursor: pointer; border: none; border-radius: 4px; font-weight: bold; transition: 0.2s;
-        }
-        .btn-add { background: var(--accent); color: white; padding: 8px; width: 100%; margin-top: 10px; }
-        .btn-dl { background: var(--success); color: white; padding: 15px 40px; font-size: 1.1rem; }
-        .btn-remove { background: #ed4245; color: white; padding: 2px 8px; }
-        .btn:hover { opacity: 0.8; }
-
-        .emoji-jumbo { width: 48px; height: 48px; object-fit: contain; }
+        :root { --bg:#1e1f22; --panel:#2b2d31; --card:#313338; --accent:#5865f2; --success:#248046; --text:#f2f3f5; --muted:#b5bac1; }
+        body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);margin:0;display:flex;height:100vh;font-size:14px}
+        .sidebar{width:380px;background:var(--panel);display:flex;flex-direction:column;border-right:1px solid #111;overflow-y:auto;padding:18px}
+        .card{background:var(--card);border-radius:10px;padding:12px;margin-bottom:12px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+        .card h3{margin:0 0 10px 0;font-size:0.78rem;color:var(--accent);text-transform:uppercase;border-bottom:1px solid #444;padding-bottom:6px}
+        textarea{width:100%;height:56px;background:var(--bg);border:1px solid #444;color:white;padding:10px;border-radius:6px;box-sizing:border-box;font-size:1.1rem;font-weight:900}
+        .row{display:flex;align-items:center;gap:8px;margin-top:8px}
+        .row label{flex:1;font-size:0.8rem;color:var(--muted)}
+        select,input[type=range],input[type=color],input[type=text]{background:var(--bg);color:white;border:1px solid #444;border-radius:4px}
+        input[type=range]{flex:2}
+        .stroke-item{display:flex;align-items:center;gap:8px;background:var(--bg);padding:8px;border-radius:6px;margin-top:6px;border:1px solid #111}
+        .btn-remove{background:#ed4245;color:white;border:none;border-radius:4px;cursor:pointer;padding:4px 8px}
+        .main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:18px}
+        .canvas-wrap{position:relative;padding:12px;border-radius:12px;background:repeating-conic-gradient(#333 0% 25%, #444 0% 50%) 50% / 20px 20px;border:5px solid var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+        canvas{background:transparent;display:block}
+        .overlay-canvas{position:absolute;left:12px;top:12px;pointer-events:none}
+        .discord-preview{background:#313338;width:100%;max-width:520px;padding:12px;border-radius:8px;border:1px solid #444}
+        .msg{display:flex;gap:12px}
+        .avatar{width:40px;height:40px;background:var(--accent);border-radius:50%}
+        .btn-save{background:var(--success);color:white;padding:12px 36px;border:none;border-radius:8px;font-size:1.05rem;font-weight:700;cursor:pointer}
+        .btn-add{background:#4e5058;color:white;border:none;border-radius:4px;width:100%;padding:8px;margin-top:8px;cursor:pointer}
+        .preset-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+        .preset-btn{background:#2e3034;border:1px solid #444;padding:6px 8px;border-radius:6px;color:var(--muted);cursor:pointer}
+        .saved-item{display:flex;gap:8px;align-items:center;margin-top:8px}
+        .small{font-size:12px;color:var(--muted)}
     </style>
 </head>
 <body>
-
     <div class="sidebar">
-        <h2 style="margin:0 0 20px 0; font-size:1.2rem;">🎨 Emoji Maker</h2>
-        
-        <div class="section">
-            <h3>Text</h3>
-            <textarea id="textInput">見切れん&#10;デカ文字</textarea>
-            <div class="control-row">
-                <label>Font</label>
-                <select id="fontFamily" style="flex:2;">
-                    <option value="'Noto Sans JP'">Noto Sans JP</option>
-                    <option value="'RocknRoll One'">RocknRoll One</option>
-                    <option value="'Reggae One'">Reggae One</option>
-                    <option value="'DotGothic16'">DotGothic16</option>
-                    <option value="'Impact'">Impact</option>
-                </select>
-            </div>
-            <div class="control-row">
-                <label>手持ちフォント</label>
-                <input type="file" id="fontUpload" accept=".ttf,.otf,.woff" style="width:120px; font-size:0.7rem;">
-            </div>
+        <h2 style="margin:0 0 16px 0;">Emoji Ultra</h2>
+        <div class="card">
+            <h3>1. Text & Font</h3>
+            <textarea id="textInput">最強</textarea>
+            <div class="row"><select id="fontFamily" style="width:100%;padding:8px"><option value="'Dela Gothic One'">Dela Gothic (超極太)</option><option value="'Noto Sans JP'">Noto Sans (標準)</option><option value="'RocknRoll One'">RocknRoll (ポップ)</option><option value="'Reggae One'">Reggae (劇画)</option><option value="'M PLUS 2'">M PLUS (丸字)</option></select></div>
+            <div class="row"><label>外部Font</label><input type="file" id="fontFile" accept=".ttf,.otf,.woff" style="width:140px;font-size:12px"></div>
+            <div class="row"><label>自動最適化</label><input type="checkbox" id="autoOpt" checked></div>
         </div>
 
-        <div class="section">
-            <h3>Style</h3>
-            <div class="control-row">
-                <label>基本サイズ</label>
-                <input type="range" id="fontSize" min="30" max="200" value="100">
-            </div>
-            <div class="control-row">
-                <label>行間</label>
-                <input type="range" id="lineHeight" min="0.5" max="1.5" step="0.05" value="0.9">
-            </div>
-            <div class="control-row">
-                <label>グラデ</label>
-                <input type="checkbox" id="useGrad" checked>
-                <input type="color" id="col1" value="#00ffcc">
-                <input type="color" id="col2" value="#0066ff">
-            </div>
+        <div class="card">
+            <h3>2. Layout & Color</h3>
+            <div class="row"><label>基本サイズ</label><input type="range" id="fontSize" min="40" max="260" value="120"></div>
+            <div class="row"><label>行間</label><input type="range" id="lineHeight" min="0.5" max="1.5" step="0.05" value="0.85"></div>
+            <div class="row"><label>色1 (上)</label><input type="color" id="col1" value="#ffffff"><label>色2 (下)</label><input type="color" id="col2" value="#bbbbbb"></div>
+            <div class="row"><label>グラデ角度</label><input type="range" id="gradAngle" min="0" max="360" value="90"></div>
+            <div class="row"><label>配置</label><select id="placement"><option value="center">中央</option><option value="up">やや上</option><option value="down">やや下</option><option value="left-up">左上</option><option value="right-up">右上</option></select></div>
+            <div class="row"><label>回転</label><input type="range" id="rotation" min="-30" max="30" value="0"></div>
+            <div class="row"><label>横伸縮</label><input type="range" id="scaleX" min="0.6" max="1.4" step="0.01" value="1"></div>
+            <div class="row"><label>縦伸縮</label><input type="range" id="scaleY" min="0.6" max="1.4" step="0.01" value="1"></div>
         </div>
 
-        <div class="section">
-            <h3>Strokes (縁取り)</h3>
+        <div class="card">
+            <h3>3. Stroke (縁取り)</h3>
             <div id="strokeList"></div>
-            <button class="btn btn-add" id="addStroke">+ 縁取りレイヤー追加</button>
+            <button class="btn-add" id="addStroke">+ レイヤー追加</button>
         </div>
 
-        <div class="section">
-            <h3>Shadow</h3>
-            <div class="control-row">
-                <label>影</label>
-                <input type="checkbox" id="useShadow" checked>
-                <input type="color" id="shadowCol" value="#000000">
-            </div>
-            <div class="control-row">
-                <label>ぼかし</label>
-                <input type="range" id="shadowBlur" min="0" max="15" value="5">
-            </div>
+        <div class="card">
+            <h3>4. Shadow / Neon</h3>
+            <div class="row"><label>影を使う</label><input type="checkbox" id="useShadow" checked></div>
+            <div class="row"><label>影色</label><input type="color" id="shadowCol" value="#000000"></div>
+            <div class="row"><label>ぼかし</label><input type="range" id="shadowBlur" min="0" max="30" value="8"></div>
+            <hr style="border:none;border-top:1px solid #444;margin:8px 0">
+            <div class="row"><label>ネオン風</label><input type="checkbox" id="useNeon"></div>
+            <div class="row"><label>ネオン色</label><input type="color" id="neonCol" value="#00e6ff"></div>
+            <div class="row"><label>ネオン強さ</label><input type="range" id="neonStrength" min="0" max="1" step="0.05" value="0.6"></div>
         </div>
+
+        <div class="card">
+            <h3>5. 安全エリア & プリセット</h3>
+            <div class="row"><label>安全エリア表示</label><input type="checkbox" id="showSafe" checked></div>
+            <div class="preset-list" id="presetList"></div>
+            <div class="small">プリセット例: 草 / 神 / ありがとう</div>
+        </div>
+
+        <div class="card">
+            <h3>6. 保存 & 最近</h3>
+            <div class="row"><input type="text" id="saveName" placeholder="装飾に名前をつける" style="flex:1;padding:6px;border-radius:6px"></div>
+            <div class="row"><button class="btn-add" id="savePreset">名前を付けて保存</button></div>
+            <div id="savedList"></div>
+        </div>
+
     </div>
 
-    <div class="main-view">
-        <div class="canvas-container">
+    <div class="main">
+        <div class="canvas-wrap">
             <canvas id="canvas" width="128" height="128"></canvas>
+            <canvas id="overlay" width="128" height="128" class="overlay-canvas"></canvas>
         </div>
 
-        <div class="discord-mockup">
-            <div class="chat-msg">
+        <div class="discord-preview">
+            <div class="msg">
                 <div class="avatar"></div>
                 <div class="msg-content">
-                    <div class="user-info">Gemini <span>今日 21:00</span></div>
-                    <img id="previewImg" class="emoji-jumbo" src="">
+                    <div style="font-weight:bold;font-size:0.9rem;margin-bottom:6px">User <span style="font-weight:normal;color:var(--muted);font-size:0.7rem">今日 12:00</span></div>
+                    <img id="previewImg" style="width:48px;height:48px;object-fit:contain" src="">
                 </div>
             </div>
         </div>
 
-        <button class="btn btn-dl" id="dlBtn">透過PNGを書き出し</button>
-        <p style="color:var(--muted); font-size:0.8rem;">※256KB以内に自動調整されます</p>
+        <div style="display:flex;gap:12px;align-items:center">
+            <select id="exportSize"><option value="128">128×128</option><option value="256">256×256</option><option value="512">512×512</option></select>
+            <button class="btn-save" id="saveBtn">PNGを書き出す</button>
+            <div id="sizeWarn" class="small" style="margin-left:8px"></div>
+        </div>
+        <div class="small">※背景は自動で透過されます。256KBを超える可能性がある場合は警告します。</div>
     </div>
 
 <script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const preview = document.getElementById('previewImg');
+// --- state
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const octx = overlay.getContext('2d');
+let strokes = [ {color:'#ffffff', width:12}, {color:'#000000', width:6} ];
 
-    let strokes = [
-        { color: '#ffffff', width: 10 },
-        { color: '#000000', width: 5 }
-    ];
+// --- UI helpers
+function renderStrokeUI(){
+    const container = document.getElementById('strokeList'); container.innerHTML='';
+    strokes.forEach((s,i)=>{
+        const div = document.createElement('div'); div.className='stroke-item';
+        div.innerHTML = `
+            <input type="color" value="${s.color}" data-i="${i}">
+            <input type="range" min="1" max="48" value="${s.width}" data-i="${i}">
+            <button class="btn-remove" data-i="${i}">×</button>
+        `;
+        container.appendChild(div);
+    });
+    container.querySelectorAll('input[type=color]').forEach(el=>el.oninput = e=>{strokes[+e.target.dataset.i].color = e.target.value; update()});
+    container.querySelectorAll('input[type=range]').forEach(el=>el.oninput = e=>{strokes[+e.target.dataset.i].width = +e.target.value; update()});
+    container.querySelectorAll('.btn-remove').forEach(b=>b.onclick = e=>{strokes.splice(+e.target.dataset.i,1); renderStrokeUI(); update()});
+}
 
-    // UI初期化
-    function initStrokes() {
-        const list = document.getElementById('strokeList');
-        list.innerHTML = '';
-        strokes.forEach((s, i) => {
-            const item = document.createElement('div');
-            item.className = 'stroke-item';
-            item.innerHTML = `
-                <input type="color" value="${s.color}" oninput="strokes[${i}].color=this.value; draw()">
-                <input type="range" min="1" max="30" value="${s.width}" oninput="strokes[${i}].width=parseInt(this.value); draw()">
-                <button class="btn btn-remove" onclick="strokes.splice(${i},1); initStrokes(); draw()">×</button>
-            `;
-            list.appendChild(item);
-        });
+function addStroke(){ strokes.push({color:'#ffffff', width:6}); renderStrokeUI(); update(); }
+
+// --- presets & saved
+const examplePresets = [
+    {name:'草', settings:{col1:'#b3ff9e',col2:'#41d86b',strokes:[{color:'#2a2a2a',width:18},{color:'#a6ffb3',width:6}],useNeon:false}},
+    {name:'神', settings:{col1:'#fff7c6',col2:'#ffd36a',strokes:[{color:'#8b5a00',width:20},{color:'#fff7c6',width:6}],useNeon:true,neonCol:'#ffd54a',neonStrength:0.6}},
+    {name:'ありがとう', settings:{col1:'#ffe6f0',col2:'#ffb7d2',strokes:[{color:'#552244',width:16}],useNeon:false}}
+];
+
+function renderPresetButtons(){ const el = document.getElementById('presetList'); el.innerHTML=''; examplePresets.forEach(p=>{
+    const b = document.createElement('button'); b.className='preset-btn'; b.textContent = p.name; b.onclick = ()=>{applySettings(p.settings);}; el.appendChild(b);
+}); }
+
+function loadSaved(){ const raw = localStorage.getItem('emojiUltra.presets'); return raw?JSON.parse(raw):[] }
+function saveToStorage(list){ localStorage.setItem('emojiUltra.presets', JSON.stringify(list)); }
+
+function renderSavedList(){ const list = loadSaved(); const el = document.getElementById('savedList'); el.innerHTML=''; list.forEach((s,idx)=>{
+    const div = document.createElement('div'); div.className='saved-item';
+    div.innerHTML = `<div style="flex:1">${s.name}</div><button class="preset-btn" data-i="${idx}">適用</button><button class="btn-remove" data-i="${idx}">削除</button>`;
+    el.appendChild(div);
+});
+    el.querySelectorAll('.preset-btn').forEach(b=>b.onclick=e=>{ const s = loadSaved()[+e.target.dataset.i]; applySettings(s.settings); });
+    el.querySelectorAll('.btn-remove').forEach(b=>b.onclick=e=>{ const idx=+e.target.dataset.i; const arr = loadSaved(); arr.splice(idx,1); saveToStorage(arr); renderSavedList(); });
+}
+
+function saveCurrentPreset(){ const name = document.getElementById('saveName').value.trim(); if(!name) return alert('名前を入力してね');
+    const settings = collectSettings(); const list = loadSaved(); list.unshift({name,settings}); saveToStorage(list); renderSavedList(); document.getElementById('saveName').value=''; }
+
+function applySettings(s){ if(s.col1) document.getElementById('col1').value = s.col1; if(s.col2) document.getElementById('col2').value = s.col2; if(s.strokes) { strokes = JSON.parse(JSON.stringify(s.strokes)); renderStrokeUI(); } if(s.useNeon!==undefined) document.getElementById('useNeon').checked = s.useNeon; if(s.neonCol) document.getElementById('neonCol').value = s.neonCol; if(s.neonStrength) document.getElementById('neonStrength').value = s.neonStrength; update(); }
+
+function collectSettings(){ return {
+    col1: document.getElementById('col1').value,
+    col2: document.getElementById('col2').value,
+    gradAngle: +document.getElementById('gradAngle').value,
+    strokes: strokes,
+    useNeon: document.getElementById('useNeon').checked,
+    neonCol: document.getElementById('neonCol').value,
+    neonStrength: +document.getElementById('neonStrength').value
+}; }
+
+// --- rendering
+function update(){
+    // clear
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    octx.clearRect(0,0,overlay.width,overlay.height);
+
+    const text = document.getElementById('textInput').value || '';
+    const lines = text.split('\n').filter(Boolean);
+    const fontSel = document.getElementById('fontFamily').value;
+    let baseSize = +document.getElementById('fontSize').value;
+    const lh = +document.getElementById('lineHeight').value;
+    const autoOpt = document.getElementById('autoOpt').checked;
+
+    // auto optimization: adjust size/widths for short text
+    if(autoOpt){
+        const totalChars = lines.join('').length;
+        if(totalChars <= 2){ baseSize = Math.max(baseSize, 140); }
+        if(totalChars >= 3) baseSize = Math.min(baseSize, 120);
     }
 
-    function draw() {
-        ctx.clearRect(0, 0, 128, 128);
-        
-        const text = document.getElementById('textInput').value;
-        const lines = text.split('\n');
-        const font = document.getElementById('fontFamily').value;
-        const baseSize = parseInt(document.getElementById('fontSize').value);
-        const lh = parseFloat(document.getElementById('lineHeight').value);
+    // set font
+    const weight = (autoOpt && lines.join('').length<=2) ? '900' : '700';
+    ctx.font = `${weight} ${baseSize}px ${fontSel}`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round'; ctx.miterLimit = 2;
 
-        ctx.font = `900 ${baseSize}px ${font}`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.lineJoin = 'round';
+    // measure
+    let maxW = 0; lines.forEach(l=>{ const w = ctx.measureText(l).width; if(w>maxW) maxW=w; });
+    const totalStroke = strokes.reduce((s,a)=>s+a.width,0);
+    const fullW = maxW + (totalStroke*2) + 8;
+    const fullH = (lines.length * baseSize * lh) + (totalStroke*2) + 8;
+    const padding = 4;
 
-        // --- 超重要：見切れ防止ロジック ---
-        // 1. まず現在の設定で全体のサイズを測る
-        let maxLineWidth = 0;
-        lines.forEach(l => {
-            const w = ctx.measureText(l).width;
-            if(w > maxLineWidth) maxLineWidth = w;
-        });
+    // scale to fit inside 120x120
+    const scale = Math.min(120 / fullW, 120 / fullH, 1.0);
 
-        const totalStroke = strokes.reduce((a, b) => a + b.width, 0);
-        const fullWidth = maxLineWidth + (totalStroke * 2);
-        const fullHeight = (lines.length * baseSize * lh) + (totalStroke * 2);
+    // save and center
+    ctx.save(); ctx.translate(64,64);
+    // apply placement offset
+    const placement = document.getElementById('placement').value;
+    let yOffset = 0;
+    if(placement === 'up') yOffset = -8/scale;
+    if(placement === 'down') yOffset = 8/scale;
+    if(placement === 'left-up') yOffset = -10/scale;
+    if(placement === 'right-up') yOffset = -10/scale;
 
-        // 2. 128pxに収まるようにスケールを計算（縦横のうち、よりはみ出ている方に合わせる）
-        const scale = Math.min(120 / fullWidth, 120 / fullHeight, 1.0);
+    ctx.scale(scale * (+document.getElementById('scaleX').value), scale * (+document.getElementById('scaleY').value));
+    ctx.rotate(document.getElementById('rotation').value * Math.PI/180);
 
+    // placement vertical shift
+    ctx.translate(0,yOffset);
+
+    // gradient angle
+    const gradAngle = +document.getElementById('gradAngle').value * Math.PI/180;
+    const gx = Math.cos(gradAngle) * (baseSize/2);
+    const gy = Math.sin(gradAngle) * (baseSize/2);
+
+    // neon
+    const useNeon = document.getElementById('useNeon').checked;
+    const neonCol = document.getElementById('neonCol').value;
+    const neonStrength = +document.getElementById('neonStrength').value;
+
+    // shadow config
+    const useShadow = document.getElementById('useShadow').checked;
+    const shadowCol = document.getElementById('shadowCol').value;
+    const shadowBlur = +document.getElementById('shadowBlur').value;
+
+    // draw neon glow behind everything (if enabled)
+    if(useNeon){
         ctx.save();
-        ctx.translate(64, 64);
-        ctx.scale(scale, scale); // ここで全体を枠内に圧縮！
-
-        const drawText = (mode, sIdx) => {
-            lines.forEach((line, i) => {
-                const y = (i - (lines.length - 1) / 2) * (baseSize * lh);
-                if (mode === 'shadow') {
-                    ctx.shadowColor = document.getElementById('shadowCol').value;
-                    ctx.shadowBlur = document.getElementById('shadowBlur').value;
-                    ctx.shadowOffsetX = 3; ctx.shadowOffsetY = 3;
-                    ctx.strokeText(line, 0, y);
-                    ctx.fillText(line, 0, y);
-                } else if (mode === 'stroke') {
-                    let currentSum = 0;
-                    for(let j=0; j<=sIdx; j++) currentSum += strokes[j].width;
-                    ctx.strokeStyle = strokes[sIdx].color;
-                    ctx.lineWidth = currentSum * 2;
-                    ctx.strokeText(line, 0, y);
-                } else {
-                    if (document.getElementById('useGrad').checked) {
-                        const grad = ctx.createLinearGradient(0, -baseSize/2, 0, baseSize/2);
-                        grad.addColorStop(0, document.getElementById('col1').value);
-                        grad.addColorStop(1, document.getElementById('col2').value);
-                        ctx.fillStyle = grad;
-                    } else {
-                        ctx.fillStyle = document.getElementById('col1').value;
-                    }
-                    ctx.fillText(line, 0, y);
-                }
-            });
-        };
-
-        // 描画順：影 -> 外フチ -> 内フチ -> 塗り
-        if(document.getElementById('useShadow').checked) drawText('shadow');
-        for(let i=strokes.length-1; i>=0; i--) drawText('stroke', i);
-        drawText('fill');
-
+        ctx.globalCompositeOperation = 'lighter';
+        lines.forEach((line,i)=>{
+            const y = (i - (lines.length-1)/2) * (baseSize * lh);
+            ctx.fillStyle = neonCol;
+            ctx.shadowColor = neonCol;
+            ctx.shadowBlur = 24 * neonStrength;
+            ctx.fillText(line,0,y);
+        });
         ctx.restore();
-        preview.src = canvas.toDataURL();
     }
 
-    // イベント
-    document.getElementById('addStroke').onclick = () => {
-        strokes.push({color:'#ffffff', width:5});
-        initStrokes();
-        draw();
-    };
+    // draw strokes from outermost to innermost
+    for(let si = 0; si < strokes.length; si++){
+        const s = strokes[si];
+        ctx.save();
+        ctx.lineWidth = s.width * 2; // multiplier for visibility
+        ctx.strokeStyle = s.color;
+        ctx.shadowBlur = 0; // no shadow on stroke for clarity
+        lines.forEach((line,i)=>{ const y = (i - (lines.length-1)/2) * (baseSize * lh); ctx.strokeText(line,0,y); });
+        ctx.restore();
+    }
 
-    document.getElementById('fontUpload').onchange = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const f = new FontFace('CustomFont', ev.target.result);
-            f.load().then(loaded => {
-                document.fonts.add(loaded);
-                document.getElementById('fontFamily').innerHTML += `<option value="CustomFont">📂 ${file.name}</option>`;
-                document.getElementById('fontFamily').value = "CustomFont";
-                draw();
-            });
-        };
-        reader.readAsArrayBuffer(file);
-    };
-
-    document.getElementById('dlBtn').onclick = () => {
-        const link = document.createElement('a');
-        link.download = 'emoji.png';
-        link.href = canvas.toDataURL();
-        link.click();
-    };
-
-    document.querySelectorAll('input, select, textarea').forEach(el => {
-        el.oninput = draw;
+    // fill with gradient and optional shadow (only on fill)
+    lines.forEach((line,i)=>{
+        const y = (i - (lines.length-1)/2) * (baseSize * lh);
+        const grad = ctx.createLinearGradient(-gx, -gy + y, gx, gy + y);
+        grad.addColorStop(0, document.getElementById('col1').value);
+        grad.addColorStop(1, document.getElementById('col2').value);
+        ctx.fillStyle = grad;
+        if(useShadow){ ctx.save(); ctx.shadowColor = shadowCol; ctx.shadowBlur = shadowBlur; ctx.shadowOffsetX = 4; ctx.shadowOffsetY = 4; ctx.fillText(line,0,y); ctx.restore(); }
+        else ctx.fillText(line,0,y);
     });
 
-    window.onload = () => { initStrokes(); setTimeout(draw, 300); };
+    ctx.restore();
+
+    // update preview image
+    document.getElementById('previewImg').src = canvas.toDataURL();
+
+    // overlay (safety area etc) - drawn on separate canvas so export doesn't include it
+    drawOverlay(scale);
+}
+
+function drawOverlay(scale){ octx.clearRect(0,0,overlay.width,overlay.height);
+    if(!document.getElementById('showSafe').checked) return;
+    // show a 96x96 safe area centered (approx 3/4)
+    const safe = 96;
+    const x = (overlay.width - safe)/2; const y=(overlay.height-safe)/2;
+    octx.strokeStyle = 'rgba(255,255,255,0.06)'; octx.lineWidth = 1.5; octx.setLineDash([4,4]);
+    octx.strokeRect(x,y,safe,safe);
+    octx.setLineDash([]);
+}
+
+// --- export
+function exportPNG(){ const size = +document.getElementById('exportSize').value; // we will render to an offscreen canvas at requested size
+    const off = document.createElement('canvas'); off.width = size; off.height = size; const oc = off.getContext('2d');
+    // white/transparent background
+    oc.clearRect(0,0,size,size);
+    // scale factor from base 128
+    const s = size / 128;
+    // draw main canvas scaled
+    oc.drawImage(canvas, 0, 0, 128, 128, 0, 0, size, size);
+
+    off.toBlob(blob=>{
+        const warnEl = document.getElementById('sizeWarn'); warnEl.textContent='';
+        if(blob.size > 256*1024){ warnEl.textContent = `警告: ${Math.round(blob.size/1024)}KB - Discordの256KB制限を超える可能性があります。128で書き出すか縁取りを軽くしてください.`; }
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'emoji.png'; a.click(); URL.revokeObjectURL(a.href);
+    }, 'image/png');
+}
+
+// --- file font loader
+document.getElementById('fontFile').onchange = (e)=>{ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = ev=>{
+        const data = ev.target.result; const face = new FontFace('CustomLocal', data); face.load().then(loaded=>{ document.fonts.add(loaded); const sel = document.getElementById('fontFamily'); const opt = document.createElement('option'); opt.value='CustomLocal'; opt.textContent = `📂 ${file.name}`; sel.insertBefore(opt, sel.firstChild); sel.value = 'CustomLocal'; update(); }); };
+    reader.readAsArrayBuffer(file);
+}
+
+// --- events
+document.getElementById('addStroke').onclick = addStroke;
+document.getElementById('saveBtn').onclick = exportPNG;
+document.getElementById('savePreset').onclick = saveCurrentPreset;
+Array.from(document.querySelectorAll('input,select,textarea')).forEach(el=>{ el.addEventListener('input', debounce(update, 120)); });
+
+// --- utils
+function debounce(fn, t){ let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a), t); }; }
+
+// init
+renderStrokeUI(); renderPresetButtons(); renderSavedList(); update();
+
+// expose for debugging
+window._strokes = strokes; window.applySettings = applySettings; window.saveToStorage = saveToStorage;
 </script>
 </body>
 </html>
