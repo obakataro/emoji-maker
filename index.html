@@ -2,23 +2,30 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emoji Generator Pro - Storage Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Emoji Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@100..900&family=Noto+Sans+JP:wght@100..900&family=Reggae+One&family=RocknRoll+One&family=Dela+Gothic+One&family=Yuji+Syuku&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #1e1f22; --panel: #2b2d31; --card: #313338;
             --accent: #5865f2; --success: #248046; --danger: #ed4245; 
             --text: #f2f3f5; --muted: #b5bac1; --border: #111;
+            --touch-size: 48px;
         }
+        * { box-sizing: border-box; }
         body {
             font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text);
             margin: 0; display: flex; height: 100vh; overflow: hidden; font-size: 13px;
         }
 
         /* Layout */
-        .sidebar { width: 420px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .sidebar { width: 420px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: transform 240ms ease; z-index: 40; }
         .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #111; position: relative; }
+
+        /* Topbar */
+        .topbar { position: absolute; top: 12px; left: 12px; right: 12px; display:flex; gap:8px; justify-content:space-between; align-items:center; z-index:50; }
+        .topbar .left { display:flex; gap:8px; align-items:center; }
+        .icon-btn { width: var(--touch-size); height: var(--touch-size); min-width: var(--touch-size); border-radius: 10px; display:flex; align-items:center; justify-content:center; border:none; background: rgba(255,255,255,0.03); color:var(--text); }
 
         /* Tabs */
         .tabs { display: flex; background: #000; }
@@ -38,41 +45,56 @@
         .row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
         .row label { flex: 1; color: var(--muted); font-size: 0.8rem; }
         
-        input, select, textarea { background: #111; border: 1px solid #555; color: white; border-radius: 4px; padding: 4px; }
-        input[type="range"] { flex: 2; height: 6px; accent-color: var(--accent); cursor: pointer; }
-        input[type="color"] { width: 30px; height: 30px; padding: 0; border: none; cursor: pointer; }
-        textarea { width: 100%; height: 50px; font-size: 1.1rem; font-weight: bold; box-sizing: border-box; }
+        input, select, textarea { background: #111; border: 1px solid #555; color: white; border-radius: 4px; padding: 8px; }
+        input[type="range"] { flex: 2; height: 40px; accent-color: var(--accent); cursor: pointer; }
+        input[type="color"] { width: 40px; height: 40px; padding: 0; border: none; cursor: pointer; }
+        textarea { width: 100%; height: 60px; font-size: 1.1rem; font-weight: bold; box-sizing: border-box; }
 
         /* Preset Manager Styles */
         .preset-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; max-height: 150px; overflow-y: auto; }
-        .preset-item {
-            display: flex; align-items: center; gap: 8px; background: #222; padding: 5px 8px; border-radius: 4px;
-        }
+        .preset-item { display: flex; align-items: center; gap: 8px; background: #222; padding: 5px 8px; border-radius: 4px; }
         .preset-name { flex: 1; cursor: pointer; font-size: 0.85rem; }
         .preset-name:hover { color: var(--accent); }
 
         /* Canvas Area */
-        .canvas-area {
-            position: relative; padding: 20px; border-radius: 12px;
-            background: repeating-conic-gradient(#333 0% 25%, #444 0% 50%) 50% / 20px 20px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-        }
-        .canvas-area.interactive { border: 2px solid var(--accent); cursor: move; }
+        .canvas-area { position: relative; padding: 20px; border-radius: 12px; background: repeating-conic-gradient(#333 0% 25%, #444 0% 50%) 50% / 20px 20px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .canvas-area.interactive { border: 2px solid var(--accent); }
 
         /* Buttons */
-        .btn { border: none; border-radius: 4px; padding: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        .btn { border: none; border-radius: 8px; padding: 12px; cursor: pointer; font-weight: bold; color: white; transition: 0.16s; }
         .btn-blue { background: var(--accent); }
         .btn-green { background: var(--success); }
         .btn-red { background: var(--danger); }
         .btn-gray { background: #4e5058; }
-        .btn-sm { padding: 2px 6px; font-size: 0.75rem; }
+        .btn-sm { padding: 6px 10px; font-size: 0.85rem; }
 
         .hidden { display: none !important; }
+
+        /* Mobile responsive */
+        @media (max-width: 720px) {
+            body { font-size: 15px; }
+            .sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: min(92%, 380px); transform: translateX(-110%); box-shadow: 2px 0 14px rgba(0,0,0,0.6); }
+            .sidebar.open { transform: translateX(0); }
+            .main { padding: 12px; }
+            .topbar { left: 8px; right: 8px; }
+            .tabs { display:none; }
+            .canvas-area { padding: 12px; }
+            .btn { border-radius: 10px; padding: 12px; }
+            textarea { height: 80px; }
+            input[type="range"] { height: 44px; }
+
+            /* bottom toolbar */
+            .bottombar { position: absolute; bottom: 12px; left: 12px; right: 12px; display:flex; gap:8px; justify-content:space-between; z-index:50; }
+            .bottombar .tool { flex:1; height: var(--touch-size); border-radius: 12px; background: rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; }
+        }
+
+        /* small helpful label under canvas */
+        .hint { color:var(--muted); font-size:0.78rem; margin-top:10px; }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="tabs">
         <button class="tab-btn active" id="tab-btn-main" onclick="setTab('main')">基本</button>
         <button class="tab-btn" id="tab-btn-style" onclick="setTab('style')">装飾</button>
@@ -165,32 +187,65 @@
                     <input type="text" id="presetNameInput" placeholder="スタイル名を入力" style="flex:1">
                     <button class="btn btn-green btn-sm" onclick="saveCurrentToPresets()">保存</button>
                 </div>
-                <div class="preset-list" id="presetList">
-                    </div>
+                <div class="preset-list" id="presetList"></div>
             </div>
             <div class="card">
                 <h3>External Data (JSON)</h3>
-                <button class="btn btn-gray btn-sm" style="width:100%" onclick="exportToClipboard()">現在の設定をコピー</button>
+                <div class="row" style="gap:6px;">
+                    <button class="btn btn-gray btn-sm" style="flex:1" onclick="exportToClipboard()">現在の設定をコピー</button>
+                    <button class="btn btn-gray btn-sm" style="flex:1" onclick="downloadJson()">JSONとして保存</button>
+                </div>
                 <div class="row" style="margin-top:10px;">
                     <textarea id="jsonInput" style="height:40px; font-size:0.7rem;" placeholder="JSONをここに貼り付け"></textarea>
                 </div>
-                <button class="btn btn-gray btn-sm" style="width:100%; margin-top:5px;" onclick="importFromJson()">JSONから読込</button>
+                <div class="row" style="gap:6px; margin-top:6px;">
+                    <button class="btn btn-gray btn-sm" style="flex:1;" onclick="importFromJson()">JSONから読込</button>
+                    <input id="fileInput" type="file" accept="application/json" style="display:none" onchange="importFromFile(event)">
+                    <button class="btn btn-gray btn-sm" style="flex:1;" onclick="document.getElementById('fileInput').click()">ファイルから読込</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="main">
+    <div class="topbar">
+        <div class="left">
+            <button class="icon-btn" id="hamburger" title="メニュー" onclick="toggleSidebar()">☰</button>
+            <button class="icon-btn" id="undoBtn" title="元に戻す" onclick="undo()">⟲</button>
+            <button class="icon-btn" id="redoBtn" title="やり直す" onclick="redo()">⟳</button>
+        </div>
+        <div class="right">
+            <button class="icon-btn" title="縮小表示" onclick="zoomOut()">−</button>
+            <button class="icon-btn" title="拡大表示" onclick="zoomIn()">＋</button>
+            <button class="icon-btn" title="全画面" onclick="toggleFullScreen()">⤢</button>
+        </div>
+    </div>
+
     <div id="canvasWrapper" class="canvas-area">
         <canvas id="canvas" width="128" height="128"></canvas>
+        <img id="previewImg" alt="" style="display:none;width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;">
     </div>
-    
-    <button class="btn btn-green" style="width:300px; margin-top:30px; padding:15px; font-size:1.2rem;" onclick="downloadImage()">PNGをダウンロード</button>
-    <p style="color:var(--muted); font-size:0.8rem; margin-top:10px;">職人モードでは文字を直接ドラッグできます</p>
+    <div style="display:flex; gap:12px; margin-top:18px;">
+        <button class="btn btn-green" style="width:220px; padding:12px; font-size:1rem;" onclick="downloadImage()">PNGをダウンロード</button>
+        <button class="btn btn-gray" style="width:140px; padding:12px; font-size:0.95rem;" onclick="shareImage()">共有</button>
+        <div style="display:flex; gap:6px; align-items:center;">
+            <button class="btn btn-sm btn-blue" onclick="exportScaled(2)">@2x</button>
+            <button class="btn btn-sm btn-blue" onclick="exportScaled(4)">@4x</button>
+        </div>
+    </div>
+    <p class="hint">職人モードでは文字を直接ドラッグできます（タッチ対応）。サイドバーはスマホで折りたためます。</p>
+
+    <div class="bottombar hidden" id="mobileBottom">
+        <div class="tool" onclick="setTab('main')">基本</div>
+        <div class="tool" onclick="setTab('style')">装飾</div>
+        <div class="tool" onclick="setTab('craft')">職人</div>
+        <div class="tool" onclick="setTab('save')">保存</div>
+    </div>
 </div>
 
 <script>
-// --- State & Core ---
+/* ---------- State & Core ---------- */
 let state = {
     text: "最強\n絵文字", font: "'Dela Gothic One'", weight: 900,
     size: 120, lineHeight: 0.85, skew: 0,
@@ -205,308 +260,157 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let selectedIdx = -1;
 let lastScale = 1;
+let dragging = false;
+let history = [];
+let historyIndex = -1;
 
 function init() {
     loadPresetsFromStorage();
     setupInputs();
+    ensureChars();
+    syncUI();
     updateCharGrid();
+    renderStrokeList();
     draw();
-    
-    // Drag and Drop
-    canvas.addEventListener('mousedown', onStartDrag);
-    window.addEventListener('mousemove', onDrag);
-    window.addEventListener('mouseup', () => dragging = false);
+    bindPointerEvents();
+    pushHistorySnapshot();
+    // mobile UI
+    if(window.matchMedia && window.matchMedia('(max-width:720px)').matches) {
+        document.getElementById('mobileBottom').classList.remove('hidden');
+    }
 }
 
+/* ---------- History (undo/redo) ---------- */
+function pushHistorySnapshot() {
+    try {
+        // deep clone
+        const snapshot = JSON.parse(JSON.stringify(state));
+        // if last snapshot equals snapshot, skip
+        if(historyIndex>=0) {
+            const last = JSON.stringify(history[historyIndex]);
+            if(last === JSON.stringify(snapshot)) return;
+        }
+        // drop future
+        history.splice(historyIndex+1);
+        history.push(snapshot);
+        if(history.length > 40) history.shift();
+        historyIndex = history.length - 1;
+        updateUndoButtons();
+    } catch(e){ console.warn('history push failed', e); }
+}
+function undo(){ if(historyIndex>0){ historyIndex--; state = JSON.parse(JSON.stringify(history[historyIndex])); ensureChars(); syncUI(); updateCharGrid(); draw(); updateUndoButtons(); }}
+function redo(){ if(historyIndex < history.length-1){ historyIndex++; state = JSON.parse(JSON.stringify(history[historyIndex])); ensureChars(); syncUI(); updateCharGrid(); draw(); updateUndoButtons(); }}
+function updateUndoButtons(){ document.getElementById('undoBtn').disabled = !(historyIndex>0); document.getElementById('redoBtn').disabled = !(historyIndex < history.length-1); }
+
+/* ---------- Helpers ---------- */
+function ensureChars(){ const chars = Array.from(state.text.replace(/\n/g, '')); while(state.chars.length < chars.length) { state.chars.push({x:0, y:0, scale:1, rot:0, useCol:false, col:'#ff0000'}); } if(state.chars.length > chars.length) state.chars.length = chars.length; }
+function syncUI(){ document.getElementById('textInput').value = state.text; document.getElementById('fontFamily').value = state.font; document.getElementById('fontWeight').value = state.weight; document.getElementById('globalSize').value = state.size; document.getElementById('lineHeight').value = state.lineHeight; document.getElementById('skew').value = state.skew; document.getElementById('col1').value = state.colors[0] || '#ffffff'; document.getElementById('col2').value = state.colors[1] || '#00ccff'; document.getElementById('col3').value = state.colors[2] || '#0066ff'; document.getElementById('gradAngle').value = state.angle; document.getElementById('useRainbow').checked = !!state.rainbow; document.getElementById('bgType').value = state.bg.type || 'none'; document.getElementById('bgColor').value = state.bg.color || '#000000'; document.getElementById('textureMode').value = state.texture || 'none'; document.getElementById('useNeon').checked = !!state.neon; renderStrokeList(); }
+
+function setDeepProp(obj, path, val) {
+    if(path.includes('SELECTED')) { if(selectedIdx < 0) return; path = path.replace('SELECTED', selectedIdx); }
+    const parts = path.split('.'); let t = obj;
+    for(let i=0; i<parts.length-1; i++){
+        const p = parts[i]; if(!Object.prototype.hasOwnProperty.call(t,p) || t[p] === undefined) { const nextIsIndex = /^\d+$/.test(parts[i+1]); t[p] = nextIsIndex ? [] : {}; }
+        t = t[p];
+    }
+    // convert numeric-like strings to numbers for range inputs
+    const lastKey = parts[parts.length-1];
+    if(typeof val === 'string' && val !== '' && !isNaN(val) && lastKey !== 'col') val = parseFloat(val);
+    t[parts[parts.length-1]] = val; pushHistorySnapshot();
+}
+
+/* ---------- Input Binding ---------- */
 function setupInputs() {
     const bind = (id, prop, event='input', isCheck=false) => {
         const el = document.getElementById(id);
         el.addEventListener(event, (e) => {
             const val = isCheck ? e.target.checked : e.target.value;
-            setDeepProp(state, prop, val);
-            if(id === 'textInput') updateCharGrid();
+            const numProps = ['size','lineHeight','skew','weight','angle'];
+            let setVal = val;
+            if(el.type === 'range' || numProps.includes(prop.split('.').slice(-1)[0])) setVal = parseFloat(val);
+            if(prop.startsWith('colors')) setDeepProp(state, prop, val); else setDeepProp(state, prop, setVal);
+            if(id === 'textInput') { ensureChars(); updateCharGrid(); }
             draw();
-        });
+        }, {passive:true});
     };
 
-    bind('textInput', 'text');
-    bind('fontFamily', 'font');
-    bind('fontWeight', 'weight');
-    bind('globalSize', 'size');
-    bind('lineHeight', 'lineHeight');
-    bind('skew', 'skew');
-    bind('col1', 'colors.0');
-    bind('col2', 'colors.1');
-    bind('col3', 'colors.2');
-    bind('gradAngle', 'angle');
-    bind('useRainbow', 'rainbow', 'change', true);
-    bind('bgType', 'bg.type', 'change');
-    bind('bgColor', 'bg.color');
-    bind('textureMode', 'texture', 'change');
-    bind('useNeon', 'neon', 'change', true);
-    
-    // Craft Detail
-    bind('c_scale', 'chars.SELECTED.scale');
-    bind('c_rot', 'chars.SELECTED.rot');
-    bind('c_useCol', 'chars.SELECTED.useCol', 'change', true);
-    bind('c_col', 'chars.SELECTED.col');
+    bind('textInput', 'text'); bind('fontFamily', 'font', 'change'); bind('fontWeight', 'weight'); bind('globalSize', 'size'); bind('lineHeight', 'lineHeight'); bind('skew', 'skew'); bind('col1', 'colors.0', 'input'); bind('col2', 'colors.1', 'input'); bind('col3', 'colors.2', 'input'); bind('gradAngle', 'angle'); bind('useRainbow', 'rainbow', 'change', true); bind('bgType', 'bg.type', 'change'); bind('bgColor', 'bg.color', 'input'); bind('textureMode', 'texture', 'change'); bind('useNeon', 'neon', 'change', true);
+
+    // Craft Detail bindings
+    bind('c_scale', 'chars.SELECTED.scale'); bind('c_rot', 'chars.SELECTED.rot'); bind('c_useCol', 'chars.SELECTED.useCol', 'change', true); bind('c_col', 'chars.SELECTED.col', 'input');
 }
 
-function setDeepProp(obj, path, val) {
-    if(path.includes('SELECTED')) {
-        if(selectedIdx < 0) return;
-        path = path.replace('SELECTED', selectedIdx);
-    }
-    const parts = path.split('.');
-    let t = obj;
-    for(let i=0; i<parts.length-1; i++) t = t[parts[i]];
-    t[parts[parts.length-1]] = val;
-}
+/* ---------- Drawing (same approach as before) ---------- */
+function roundRectPath(ctx, x, y, w, h, r) { if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); } else { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); }}
 
-// --- Drawing ---
 function draw() {
-    ctx.clearRect(0, 0, 128, 128);
-    const lines = state.text.split('\n');
-    ctx.font = `${state.weight} ${state.size}px ${state.font}`;
-    
-    // Calc Auto-Scale
-    let maxW = 0;
-    lines.forEach(l => {
-        const w = ctx.measureText(l).width + Math.abs(state.size * Math.tan(state.skew * Math.PI/180));
-        if(w > maxW) maxW = w;
-    });
-    const contentH = lines.length * state.size * state.lineHeight;
-    lastScale = Math.min(110/(maxW+20), 110/(contentH+20), 1.0);
-
-    ctx.save();
-    ctx.translate(64, 64);
-    ctx.scale(lastScale, lastScale);
-
-    // Zabuton
-    if(state.bg.type !== 'none') {
-        ctx.fillStyle = state.bg.color;
-        ctx.beginPath();
-        if(state.bg.type==='rect') ctx.rect(-70, -70, 140, 140);
-        else if(state.bg.type==='round') ctx.roundRect(-65, -65, 130, 130, 20);
-        else if(state.bg.type==='burst') {
-            for(let i=0; i<20; i++) {
-                const a = (i/20)*Math.PI*2;
-                const r = i%2===0 ? 80 : 40;
-                ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r);
-            }
-        }
-        ctx.fill();
-    }
-
-    const startY = -((lines.length-1)*state.size*state.lineHeight)/2;
-    let charIdx = 0;
-
-    // Layer Pass
-    const render = (mode, sIdx) => {
-        let currentIdx = 0;
-        lines.forEach((line, li) => {
-            const lw = ctx.measureText(line).width;
-            let x = -lw/2;
-            const y = startY + li * state.size * state.lineHeight;
-            
-            Array.from(line).forEach(char => {
-                const cw = ctx.measureText(char).width;
-                if(!state.chars[currentIdx]) state.chars[currentIdx] = {x:0, y:0, scale:1, rot:0, useCol:false, col:'#ff0000'};
-                const c = state.chars[currentIdx];
-
-                ctx.save();
-                ctx.translate(x + cw/2 + c.x, y + c.y);
-                ctx.transform(1, 0, Math.tan(state.skew * Math.PI/180), 1, 0, 0);
-                ctx.rotate(c.rot * Math.PI/180);
-                ctx.scale(c.scale, c.scale);
-
-                if(mode==='neon' && state.neon) {
-                    ctx.shadowColor = state.colors[1]; ctx.shadowBlur = 15;
-                    ctx.fillStyle = state.colors[1]; ctx.fillText(char, 0, 0);
-                } else if(mode==='stroke') {
-                    let total = 0; for(let i=0; i<=sIdx; i++) total += state.strokes[i].width;
-                    ctx.strokeStyle = state.strokes[sIdx].color;
-                    ctx.lineWidth = total * 2; ctx.lineJoin = 'round';
-                    ctx.strokeText(char, 0, 0);
-                } else if(mode==='fill') {
-                    if(c.useCol) ctx.fillStyle = c.col;
-                    else if(state.rainbow) ctx.fillStyle = `hsl(${(currentIdx*40)%360}, 100%, 50%)`;
-                    else {
-                        const g = ctx.createLinearGradient(0, -state.size/2, 0, state.size/2);
-                        g.addColorStop(0, state.colors[0]); g.addColorStop(0.5, state.colors[1]); g.addColorStop(1, state.colors[2]);
-                        ctx.fillStyle = g;
-                    }
-                    ctx.fillText(char, 0, 0);
-                }
-                ctx.restore();
-                x += cw; currentIdx++;
-            });
-        });
-    };
-
-    if(state.neon) render('neon');
-    for(let i=state.strokes.length-1; i>=0; i--) render('stroke', i);
-    render('fill');
-    ctx.restore();
-
-    // Texture
-    if(state.texture !== 'none') {
-        ctx.save(); ctx.globalCompositeOperation = 'source-atop'; ctx.globalAlpha = 0.3;
-        if(state.texture==='noise') {
-            for(let i=0; i<1000; i++) { ctx.fillStyle=Math.random()>0.5?'#fff':'#000'; ctx.fillRect(Math.random()*128, Math.random()*128, 1, 1); }
-        } else if(state.texture==='gloss') {
-            const g = ctx.createLinearGradient(0,0,128,128); g.addColorStop(0, '#fff'); g.addColorStop(1, 'transparent');
-            ctx.fillStyle = g; ctx.fillRect(0,0,128,128);
-        }
-        ctx.restore();
-    }
-    document.getElementById('previewImg').src = canvas.toDataURL();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ensureChars(); const lines = state.text.split('\n'); ctx.font = `${state.weight} ${state.size}px ${state.font}, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+    let maxW = 0; lines.forEach(l => { const w = ctx.measureText(l).width + Math.abs(state.size * Math.tan(state.skew * Math.PI/180)); if(w > maxW) maxW = w; });
+    const contentH = lines.length * state.size * state.lineHeight; lastScale = Math.min(110/(maxW+20), 110/(contentH+20), 1.0);
+    ctx.save(); ctx.translate(64, 64); ctx.scale(lastScale, lastScale);
+    if(state.bg.type !== 'none') { ctx.fillStyle = state.bg.color || '#000'; ctx.save(); if(state.bg.type === 'rect') { roundRectPath(ctx, -70, -70, 140, 140, 6); ctx.fill(); } else if(state.bg.type === 'round') { roundRectPath(ctx, -65, -65, 130, 130, 20); ctx.fill(); } else if(state.bg.type === 'burst') { ctx.beginPath(); for(let i=0;i<30;i++){ const a=(i/30)*Math.PI*2; const r = i%2===0?80:40; ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r); } ctx.closePath(); ctx.fill(); } ctx.restore(); }
+    const startY = -((lines.length-1)*state.size*state.lineHeight)/2; let charCounter=0;
+    const render = (mode, sIdx) => { let currentIdx=0; lines.forEach((line, li) => { const lw = ctx.measureText(line).width; let x = -lw/2; const y = startY + li * state.size * state.lineHeight; Array.from(line).forEach(char => { if(!state.chars[currentIdx]) state.chars[currentIdx] = {x:0,y:0,scale:1,rot:0,useCol:false,col:'#ff0000'}; const c = state.chars[currentIdx]; const cw = ctx.measureText(char).width; ctx.save(); ctx.translate(x + cw/2 + c.x, y + c.y); const k = Math.tan(state.skew * Math.PI/180); ctx.transform(1, 0, k, 1, 0, 0); ctx.rotate((c.rot||0) * Math.PI/180); ctx.scale(c.scale||1, c.scale||1);
+                if(mode==='neon' && state.neon){ ctx.shadowColor = state.colors[1] || '#00ccff'; ctx.shadowBlur = 18; ctx.fillStyle = state.colors[1] || '#00ccff'; ctx.fillText(char, 0, 0); ctx.shadowBlur=0; }
+                else if(mode==='stroke'){ ctx.strokeStyle = state.strokes[sIdx].color; ctx.lineWidth = state.strokes[sIdx].width * 2; ctx.strokeText(char, 0, 0); }
+                else if(mode==='fill'){ if(c.useCol) ctx.fillStyle = c.col; else if(state.rainbow) ctx.fillStyle = `hsl(${(currentIdx*40)%360},100%,50%)`; else { const g = ctx.createLinearGradient(0, -state.size/2, 0, state.size/2); g.addColorStop(0, state.colors[0]||'#fff'); g.addColorStop(0.5, state.colors[1]||'#00ccff'); g.addColorStop(1, state.colors[2]||'#0066ff'); ctx.fillStyle = g; } ctx.fillText(char, 0, 0); }
+                ctx.restore(); x += cw; currentIdx++; }); }); };
+    if(state.neon) render('neon'); for(let i=state.strokes.length-1;i>=0;i--) render('stroke', i); render('fill'); ctx.restore();
+    if(state.texture !== 'none'){ ctx.save(); ctx.globalCompositeOperation = 'source-atop'; ctx.globalAlpha = 0.25; if(state.texture==='noise'){ for(let i=0;i<500;i++){ ctx.fillStyle=Math.random()>0.5?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.6)'; ctx.fillRect(Math.random()*128, Math.random()*128, 1, 1); } } else if(state.texture==='gloss'){ const g = ctx.createLinearGradient(0,0,128,128); g.addColorStop(0,'rgba(255,255,255,0.6)'); g.addColorStop(1,'transparent'); ctx.fillStyle = g; ctx.fillRect(0,0,128,128); } ctx.restore(); }
+    const preview = document.getElementById('previewImg'); if(preview) preview.src = canvas.toDataURL();
 }
 
-// --- Presets & Storage ---
+/* ---------- Presets & Storage ---------- */
 let presets = {};
-function saveCurrentToPresets() {
-    const name = document.getElementById('presetNameInput').value.trim();
-    if(!name) return alert('名前を入れてください');
-    presets[name] = JSON.parse(JSON.stringify(state));
-    localStorage.setItem('emoji_presets_v3', JSON.stringify(presets));
-    renderPresetList();
-    document.getElementById('presetNameInput').value = '';
-}
+function saveCurrentToPresets() { const name = document.getElementById('presetNameInput').value.trim(); if(!name) return alert('名前を入れてください'); presets[name] = JSON.parse(JSON.stringify(state)); localStorage.setItem('emoji_presets_v3', JSON.stringify(presets)); renderPresetList(); document.getElementById('presetNameInput').value = ''; pushHistorySnapshot(); }
+function loadPresetsFromStorage() { const saved = localStorage.getItem('emoji_presets_v3'); if(saved) { try { presets = JSON.parse(saved); } catch(e){ presets = {}; } } }
+function renderPresetList(){ const list = document.getElementById('presetList'); list.innerHTML = ''; Object.keys(presets).forEach(name => { const div = document.createElement('div'); div.className = 'preset-item'; div.innerHTML = `<span class="preset-name" onclick="applyPreset('${escapeHtml(name)}')">${escapeHtml(name)}</span><button class="btn btn-red btn-sm" onclick="deletePreset('${escapeHtml(name)}')">削除</button>`; list.appendChild(div); }); }
+function applyPreset(name){ const target = presets[name]; if(!target) return; state = JSON.parse(JSON.stringify(target)); ensureChars(); syncUI(); updateCharGrid(); renderStrokeList(); draw(); pushHistorySnapshot(); }
+function deletePreset(name){ delete presets[name]; localStorage.setItem('emoji_presets_v3', JSON.stringify(presets)); renderPresetList(); }
+function exportToClipboard(){ const str = JSON.stringify(state); navigator.clipboard.writeText(str).then(()=> alert('設定JSONをコピーしました'), ()=> alert('クリップボードにコピーできませんでした')); }
+function downloadJson(){ const a = document.createElement('a'); const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'}); a.href = URL.createObjectURL(blob); a.download = 'emoji_preset.json'; a.click(); }
+function importFromJson(){ try{ const json = document.getElementById('jsonInput').value; const parsed = JSON.parse(json); state = parsed; ensureChars(); syncUI(); updateCharGrid(); draw(); pushHistorySnapshot(); alert('読み込み完了'); }catch(e){ alert('不正な形式です'); } }
+function importFromFile(e){ const f = e.target.files && e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ()=>{ try{ state = JSON.parse(r.result); ensureChars(); syncUI(); updateCharGrid(); draw(); pushHistorySnapshot(); alert('ファイル読み込み完了'); }catch(err){ alert('ファイルが不正です'); } }; r.readAsText(f); }
 
-function loadPresetsFromStorage() {
-    const saved = localStorage.getItem('emoji_presets_v3');
-    if(saved) presets = JSON.parse(saved);
-    renderPresetList();
-}
+/* ---------- Interaction & UI ---------- */
+function setTab(t) { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); const btn = document.getElementById(`tab-btn-${t}`); if(btn) btn.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden')); const pane = document.getElementById(`pane-${t}`); if(pane) pane.classList.remove('hidden'); document.getElementById('canvasWrapper').classList.toggle('interactive', t==='craft'); if(window.matchMedia && window.matchMedia('(max-width:720px)').matches) toggleSidebar(false); }
+function updateCharGrid(){ ensureChars(); const grid = document.getElementById('charGrid'); grid.innerHTML = ''; const chars = Array.from(state.text.replace(/\n/g, '')); chars.forEach((c, i) => { const b = document.createElement('div'); b.style.cssText = "width:40px; height:40px; background:#444; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:8px; font-size:18px;"; if(selectedIdx === i) b.style.border = "2px solid var(--accent)"; b.innerText = c; b.onclick = () => { selectedIdx = i; updateCharGrid(); showCharDetail(); }; grid.appendChild(b); }); }
+function showCharDetail(){ ensureChars(); const c = state.chars[selectedIdx] || (state.chars[selectedIdx] = {x:0,y:0,scale:1,rot:0,useCol:false,col:'#ff0000'}); const pane = document.getElementById('charDetail'); pane.style.opacity = 1; pane.style.pointerEvents = 'auto'; document.getElementById('selCharName').innerText = `文字: ${state.text.replace(/\n/g,'')[selectedIdx] || ''}`; document.getElementById('c_scale').value = c.scale; document.getElementById('c_rot').value = c.rot; document.getElementById('c_useCol').checked = !!c.useCol; document.getElementById('c_col').value = c.col; }
 
-function renderPresetList() {
-    const list = document.getElementById('presetList');
-    list.innerHTML = '';
-    Object.keys(presets).forEach(name => {
-        const div = document.createElement('div');
-        div.className = 'preset-item';
-        div.innerHTML = `
-            <span class="preset-name" onclick="applyPreset('${name}')">${name}</span>
-            <button class="btn btn-red btn-sm" onclick="deletePreset('${name}')">削除</button>
-        `;
-        list.appendChild(div);
-    });
-}
+/* ---------- Drag & Pointer ---------- */
+function bindPointerEvents(){ const down = (clientX, clientY) => { if(!document.getElementById('tab-btn-craft').classList.contains('active') || selectedIdx < 0) return; dragging = true; updateDragFromClient(clientX, clientY); };
+    const move = (clientX, clientY) => { if(!dragging) return; updateDragFromClient(clientX, clientY); };
+    const up = () => { dragging = false; };
+    if(window.PointerEvent){ canvas.addEventListener('pointerdown', e=>{ e.preventDefault(); down(e.clientX, e.clientY); }); window.addEventListener('pointermove', e=>{ if(dragging){ e.preventDefault(); move(e.clientX, e.clientY); }}); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); } else { canvas.addEventListener('mousedown', e=> down(e.clientX, e.clientY)); window.addEventListener('mousemove', e=> move(e.clientX, e.clientY)); window.addEventListener('mouseup', up); canvas.addEventListener('touchstart', e=>{ const t=e.touches[0]; down(t.clientX, t.clientY); }); window.addEventListener('touchmove', e=>{ if(dragging){ const t=e.touches[0]; move(t.clientX, t.clientY); }},{passive:false}); window.addEventListener('touchend', up); } }
+function updateDragFromClient(clientX, clientY){ const rect = canvas.getBoundingClientRect(); const mx = (clientX - rect.left) / rect.width * canvas.width; const my = (clientY - rect.top) / rect.height * canvas.height; state.chars[selectedIdx].x = (mx - canvas.width/2) / lastScale; state.chars[selectedIdx].y = (my - canvas.height/2) / lastScale; draw(); pushHistorySnapshot(); }
 
-function applyPreset(name) {
-    const target = presets[name];
-    state = JSON.parse(JSON.stringify(target));
-    // UI反映（本当は全項目書くべきだが、重要なのだけ）
-    document.getElementById('textInput').value = state.text;
-    document.getElementById('fontFamily').value = state.font;
-    updateCharGrid();
-    draw();
-}
+/* ---------- Stroke UI ---------- */
+function addStroke(){ state.strokes.unshift({color:'#ffffff', width:5}); renderStrokeList(); draw(); pushHistorySnapshot(); }
+function renderStrokeList(){ const list = document.getElementById('strokeList'); list.innerHTML = ''; state.strokes.forEach((s, i) => { const d = document.createElement('div'); d.className = 'row'; d.style.marginTop='6px'; d.innerHTML = `<input type="color" value="${s.color}" onchange="state.strokes[${i}].color=this.value;draw();pushHistorySnapshot()"><input type="range" max="30" value="${s.width}" oninput="state.strokes[${i}].width=parseInt(this.value);draw();pushHistorySnapshot()"><button class="btn btn-red btn-sm" onclick="state.strokes.splice(${i},1);renderStrokeList();draw();pushHistorySnapshot()">×</button>`; list.appendChild(d); }); }
 
-function deletePreset(name) {
-    delete presets[name];
-    localStorage.setItem('emoji_presets_v3', JSON.stringify(presets));
-    renderPresetList();
-}
+/* ---------- Utilities ---------- */
+function randomize(){ state.chars.forEach(c => { c.x=(Math.random()-0.5)*40; c.y=(Math.random()-0.5)*40; c.rot=(Math.random()-0.5)*60; }); draw(); pushHistorySnapshot(); }
+function copyToAll(){ if(selectedIdx < 0) return alert('まず文字を選択してください'); const src = JSON.parse(JSON.stringify(state.chars[selectedIdx])); state.chars.forEach((c, i) => { if(i!==selectedIdx) state.chars[i] = {...src}; }); draw(); pushHistorySnapshot(); }
 
-function exportToClipboard() {
-    const str = JSON.stringify(state);
-    navigator.clipboard.writeText(str);
-    alert('設定JSONをコピーしました');
-}
+function downloadImage(){ const a = document.createElement('a'); a.download='emoji.png'; a.href=canvas.toDataURL(); a.click(); }
+function exportScaled(scale){ // scale up by drawing current canvas into larger canvas
+    const tmp = document.createElement('canvas'); tmp.width = canvas.width * scale; tmp.height = canvas.height * scale; const tctx = tmp.getContext('2d'); tctx.imageSmoothingEnabled = true; tctx.drawImage(canvas, 0, 0, tmp.width, tmp.height); const a = document.createElement('a'); a.download = `emoji@${scale}x.png`; a.href = tmp.toDataURL(); a.click(); }
 
-function importFromJson() {
-    try {
-        const json = document.getElementById('jsonInput').value;
-        state = JSON.parse(json);
-        updateCharGrid();
-        draw();
-        alert('読み込み完了');
-    } catch(e) { alert('不正な形式です'); }
-}
+async function shareImage(){ if(navigator.canShare && navigator.canShare()){ canvas.toBlob(async (blob)=>{ const file = new File([blob], 'emoji.png', {type:'image/png'}); try{ await navigator.share({ files:[file], title:'emoji', text:'作った絵文字' }); }catch(e){ // fall back
+            const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='emoji.png'; a.click(); }
+        }); } else if(navigator.share){ canvas.toBlob(async (blob)=>{ try{ await navigator.share({ title:'emoji', files:[ new File([blob],'emoji.png',{type:'image/png'}) ] }); }catch(e){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='emoji.png'; a.click(); } }); } else { downloadImage(); } }
 
-// --- Interaction ---
-function setTab(t) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(`tab-btn-${t}`).classList.add('active');
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-    document.getElementById(`pane-${t}`).classList.remove('hidden');
-    document.getElementById('canvasWrapper').classList.toggle('interactive', t==='craft');
-}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-function updateCharGrid() {
-    const grid = document.getElementById('charGrid');
-    grid.innerHTML = '';
-    const chars = Array.from(state.text.replace(/\n/g, ''));
-    chars.forEach((c, i) => {
-        const b = document.createElement('div');
-        b.style.cssText = "width:30px; height:30px; background:#444; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:4px;";
-        if(selectedIdx === i) b.style.border = "2px solid var(--accent)";
-        b.innerText = c;
-        b.onclick = () => { selectedIdx = i; updateCharGrid(); showCharDetail(); };
-        grid.appendChild(b);
-    });
-}
+/* ---------- Mobile / UI helpers ---------- */
+function toggleSidebar(force){ const sb = document.getElementById('sidebar'); if(typeof force === 'boolean'){ sb.classList.toggle('open', force); } else sb.classList.toggle('open'); }
+function toggleFullScreen(){ if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+function zoomIn(){ state.size = Math.min(state.size + 8, 720); syncUI(); draw(); pushHistorySnapshot(); }
+function zoomOut(){ state.size = Math.max(state.size - 8, 8); syncUI(); draw(); pushHistorySnapshot(); }
 
-function showCharDetail() {
-    const c = state.chars[selectedIdx];
-    const pane = document.getElementById('charDetail');
-    pane.style.opacity = 1; pane.style.pointerEvents = 'auto';
-    document.getElementById('selCharName').innerText = `文字: ${state.text.replace(/\n/g,'')[selectedIdx]}`;
-    document.getElementById('c_scale').value = c.scale;
-    document.getElementById('c_rot').value = c.rot;
-    document.getElementById('c_useCol').checked = c.useCol;
-    document.getElementById('c_col').value = c.col;
-}
-
-// --- Drag & Drop ---
-let dragging = false;
-function onStartDrag(e) {
-    if(document.getElementById('tab-btn-craft').classList.contains('active') && selectedIdx >= 0) {
-        dragging = true;
-    }
-}
-function onDrag(e) {
-    if(!dragging) return;
-    const rect = canvas.getBoundingClientRect();
-    const mx = (e.clientX - rect.left) / rect.width * 128;
-    const my = (e.clientY - rect.top) / rect.height * 128;
-    state.chars[selectedIdx].x = (mx - 64) / lastScale;
-    state.chars[selectedIdx].y = (my - 64) / lastScale;
-    draw();
-}
-
-function addStroke() {
-    state.strokes.unshift({color:'#ffffff', width:5});
-    renderStrokeList(); draw();
-}
-function renderStrokeList() {
-    const list = document.getElementById('strokeList');
-    list.innerHTML = '';
-    state.strokes.forEach((s, i) => {
-        const d = document.createElement('div');
-        d.className = 'row';
-        d.innerHTML = `<input type="color" value="${s.color}" oninput="state.strokes[${i}].color=this.value;draw()"><input type="range" max="30" value="${s.width}" oninput="state.strokes[${i}].width=parseInt(this.value);draw()"><button class="btn btn-red btn-sm" onclick="state.strokes.splice(${i},1);renderStrokeList();draw()">×</button>`;
-        list.appendChild(d);
-    });
-}
-
-function randomize() {
-    state.chars.forEach(c => { c.x=(Math.random()-0.5)*40; c.y=(Math.random()-0.5)*40; c.rot=(Math.random()-0.5)*60; });
-    draw();
-}
-function copyToAll() {
-    const src = JSON.parse(JSON.stringify(state.chars[selectedIdx]));
-    state.chars.forEach((c, i) => { if(i!==selectedIdx) state.chars[i] = {...src}; });
-    draw();
-}
-
-function downloadImage() {
-    const a = document.createElement('a'); a.download='emoji.png'; a.href=canvas.toDataURL(); a.click();
-}
-
-window.onload = () => { init(); renderStrokeList(); };
+/* ---------- Init ---------- */
+window.onload = () => { init(); };
 </script>
 </body>
 </html>
