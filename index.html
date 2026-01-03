@@ -3,693 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Emoji Ultimate V2</title>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@100..900&family=Noto+Sans+JP:wght@100..900&family=Reggae+One&family=RocknRoll+One&family=Dela+Gothic+One&family=Yuji+Syuku&display=swap" rel="stylesheet">
+    <title>Discord Emoji Ultimate Fixed</title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@900&family=Noto+Sans+JP:wght@900&family=Reggae+One&family=RocknRoll+One&family=Dela+Gothic+One&family=Yuji+Syuku:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #1e1f22; --panel: #2b2d31; --card: #313338;
             --accent: #5865f2; --success: #248046; --danger: #ed4245; 
-            --text: #f2f3f5; --muted: #b5bac1; --border: #111;
+            --text: #f2f3f5; --muted: #b5bac1;
         }
-        body {
-            font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text);
-            margin: 0; display: flex; height: 100vh; overflow: hidden; font-size: 13px;
-        }
-
+        body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; font-size: 13px; }
+        
         /* Layout */
-        .sidebar { width: 420px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background: #111; }
+        .sidebar { width: 380px; background: var(--panel); border-right: 1px solid #111; display: flex; flex-direction: column; }
+        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f0f11; position: relative; }
 
         /* Tabs */
         .tabs { display: flex; background: #000; }
-        .tab-btn {
-            flex: 1; padding: 12px; background: transparent; border: none; color: var(--muted);
-            cursor: pointer; border-bottom: 3px solid transparent; font-weight: bold; transition: 0.2s;
-        }
-        .tab-btn:hover { color: white; background: #222; }
+        .tab-btn { flex: 1; padding: 12px; background: transparent; border: none; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; font-weight: bold; }
         .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--panel); }
 
-        /* Scroll Content */
-        .scroll-content { flex: 1; overflow-y: auto; padding: 15px; scrollbar-width: thin; }
-
-        /* UI Components */
+        .scroll-content { flex: 1; overflow-y: auto; padding: 15px; }
         .card { background: var(--card); border-radius: 8px; padding: 12px; margin-bottom: 12px; border: 1px solid #444; }
-        .card h3 { margin: 0 0 10px 0; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 5px; display: flex; justify-content: space-between; }
+        .card h3 { margin: 0 0 10px 0; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; display: flex; justify-content: space-between; }
         
         .row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
         .row label { flex: 1; color: var(--muted); font-size: 0.8rem; }
         
-        input, select, textarea { background: #111; border: 1px solid #555; color: white; border-radius: 4px; padding: 4px; }
-        input[type="range"] { flex: 2; height: 6px; accent-color: var(--accent); cursor: pointer; }
-        input[type="color"] { width: 30px; height: 30px; padding: 0; border: none; cursor: pointer; }
-        textarea { width: 100%; height: 60px; font-size: 1.2rem; font-weight: bold; resize: vertical; box-sizing: border-box; }
-        select { flex: 2; }
+        input, select, textarea { background: #111; border: 1px solid #555; color: white; border-radius: 4px; padding: 5px; }
+        input[type="range"] { flex: 2; accent-color: var(--accent); }
+        textarea { width: 100%; box-sizing: border-box; font-size: 1.2rem; font-weight: bold; }
 
-        /* Craftsman Grid */
-        .char-grid { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
-        .char-btn {
-            width: 36px; height: 36px; background: #444; border: 2px solid transparent; color: white;
-            display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; font-weight: bold;
-        }
-        .char-btn:hover { background: #555; }
-        .char-btn.selected { border-color: var(--accent); background: #3a3c45; }
-
-        /* Canvas & Preview */
-        .canvas-area {
-            position: relative; padding: 20px; border-radius: 12px;
-            background: repeating-conic-gradient(#333 0% 25%, #444 0% 50%) 50% / 20px 20px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            transition: border-color 0.2s;
-        }
-        .canvas-area.interactive { border: 2px solid var(--accent); cursor: move; }
-        .canvas-area.interactive::after {
-            content: "DRAG ENABLED"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px;
-        }
-
-        .discord-mock {
-            margin-top: 20px; background: #313338; padding: 10px 15px; border-radius: 8px; width: 300px; display: flex; gap: 10px; border: 1px solid #444;
-        }
+        /* Canvas Area */
+        .canvas-container { position: relative; padding: 20px; background: repeating-conic-gradient(#333 0% 25%, #444 0% 50%) 50% / 20px 20px; border: 4px solid var(--panel); border-radius: 12px; }
+        .canvas-container.craft-active { outline: 3px solid var(--accent); cursor: crosshair; }
         
-        /* Buttons */
-        .btn { width: 100%; padding: 8px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; margin-top: 5px; }
-        .btn-blue { background: var(--accent); }
-        .btn-green { background: var(--success); font-size: 1.1rem; padding: 12px; }
-        .btn-red { background: var(--danger); width: auto; padding: 2px 8px; font-size: 0.8rem; }
-        .btn-gray { background: #4e5058; }
-        .btn-row { display: flex; gap: 5px; }
+        .preview-box { margin-top: 20px; background: #313338; padding: 15px; border-radius: 8px; width: 300px; display: flex; gap: 12px; border: 1px solid #444; }
+        .avatar { width: 40px; height: 40px; background: var(--accent); border-radius: 50%; }
 
+        /* Utils */
+        .btn { width: 100%; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; margin-top: 5px; }
+        .btn-green { background: var(--success); }
+        .btn-gray { background: #4e5058; }
+        .btn-red { background: var(--danger); width: auto; padding: 2px 8px; font-size: 0.7rem; }
         .hidden { display: none !important; }
+        
+        .char-grid { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+        .char-btn { width: 35px; height: 35px; background: #444; border: 2px solid transparent; color: white; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; }
+        .char-btn.selected { border-color: var(--accent); background: #555; }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
     <div class="tabs">
-        <button class="tab-btn active" onclick="setTab('main')">基本 (Main)</button>
-        <button class="tab-btn" onclick="setTab('style')">装飾 (Style)</button>
-        <button class="tab-btn" onclick="setTab('craft')">職人 (Craft)</button>
+        <button class="tab-btn active" onclick="switchTab('main')">基本</button>
+        <button class="tab-btn" onclick="switchTab('craft')">職人</button>
+        <button class="tab-btn" onclick="switchTab('batch')">一括</button>
     </div>
 
     <div class="scroll-content">
         <div class="card">
-            <h3>TEXT <button class="btn-red" onclick="resetAll()">Reset</button></h3>
-            <textarea id="textInput">超&#10;強化</textarea>
+            <h3>TEXT <button class="btn-red" onclick="location.reload()">Reset</button></h3>
+            <textarea id="textInput" oninput="updateAll()">最強&#10;絵文字</textarea>
             <div class="row">
-                <label>全体フォント</label>
-                <select id="fontFamily">
-                    <option value="'Dela Gothic One'">Dela Gothic (超極太)</option>
+                <select id="fontFamily" onchange="updateAll()">
+                    <option value="'Dela Gothic One'">Dela Gothic (極太)</option>
                     <option value="'Noto Sans JP'">Noto Sans JP</option>
                     <option value="'Reggae One'">Reggae One</option>
                     <option value="'RocknRoll One'">RocknRoll One</option>
                     <option value="'Yuji Syuku'">Yuji Syuku (明朝)</option>
-                    <option value="'M PLUS 2'">M PLUS 2</option>
-                    <option value="custom">📂 ファイル...</option>
                 </select>
-                <input type="file" id="fontFile" hidden accept=".ttf,.otf,.woff">
-            </div>
-            <div class="row">
-                <label>太さ (Weight)</label>
-                <input type="range" id="fontWeight" min="100" max="900" step="100" value="900">
+                <input type="file" id="fontFile" style="display:none" onchange="loadCustomFont(this)">
+                <button class="btn-gray" onclick="document.getElementById('fontFile').click()" style="width:60px; font-size:0.7rem;">📂フォント</button>
             </div>
         </div>
 
-        <div id="tab-main" class="tab-content">
+        <div id="tab-main">
             <div class="card">
-                <h3>Color (Gradient)</h3>
+                <h3>Style</h3>
+                <div class="row"><label>サイズ</label><input type="range" id="globalSize" min="50" max="250" value="120" oninput="updateAll()"></div>
+                <div class="row"><label>行間</label><input type="range" id="lineHeight" min="0.5" max="1.5" step="0.05" value="0.85" oninput="updateAll()"></div>
                 <div class="row">
-                    <input type="checkbox" id="useRainbow" onchange="toggleRainbow(this)"> <label>🌈 虹色モード</label>
-                </div>
-                <div class="row" id="gradControls">
-                    <input type="color" id="col1" value="#FFFFFF" title="上">
-                    <input type="color" id="col2" value="#00AAFF" title="中">
-                    <input type="color" id="col3" value="#0055FF" title="下">
-                </div>
-                <div class="row">
-                    <label>グラデ角度</label>
-                    <input type="range" id="gradAngle" min="0" max="360" value="90">
+                    <label>上色</label><input type="color" id="col1" value="#FFFFFF" oninput="updateAll()">
+                    <label>下色</label><input type="color" id="col2" value="#00d4ff" oninput="updateAll()">
                 </div>
             </div>
-
-            <div class="card">
-                <h3>Layout</h3>
-                <div class="row"><label>サイズ</label><input type="range" id="globalSize" min="50" max="200" value="120"></div>
-                <div class="row"><label>行間</label><input type="range" id="lineHeight" min="0.5" max="2.0" step="0.1" value="0.9"></div>
-                <div class="row"><label>斜体</label><input type="range" id="skew" min="-45" max="45" value="0"></div>
-            </div>
-        </div>
-
-        <div id="tab-style" class="tab-content hidden">
-            <div class="card">
-                <h3>Background (Zabuton)</h3>
-                <div class="row">
-                    <label>種類</label>
-                    <select id="bgType">
-                        <option value="none">なし</option>
-                        <option value="rect">四角 (Rect)</option>
-                        <option value="round">角丸 (Round)</option>
-                        <option value="circle">円 (Circle)</option>
-                        <option value="burst">集中線 (Burst)</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <label>背景色</label><input type="color" id="bgColor" value="#000000">
-                    <label>余白</label><input type="range" id="bgPad" min="0" max="50" value="10">
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Texture / Effect</h3>
-                <div class="row">
-                    <label>質感</label>
-                    <select id="textureMode">
-                        <option value="none">なし</option>
-                        <option value="noise">ザラザラ (Noise)</option>
-                        <option value="grunge">かすれ (Grunge)</option>
-                        <option value="gloss">光沢 (Gloss)</option>
-                        <option value="line">走査線 (Scanline)</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <label>強度</label><input type="range" id="texStrength" min="0" max="100" value="50">
-                </div>
-            </div>
-
             <div class="card">
                 <h3>Strokes</h3>
                 <div id="strokeList"></div>
                 <button class="btn btn-gray" onclick="addStroke()">+ 縁取り追加</button>
             </div>
-            
             <div class="card">
-                <h3>Neon / Shadow</h3>
-                <div class="row"><label>有効</label><input type="checkbox" id="useNeon"></div>
-                <div class="row"><label>色</label><input type="color" id="neonColor" value="#ff0055"></div>
-                <div class="row"><label>拡散</label><input type="range" id="neonBlur" min="0" max="50" value="20"></div>
+                <h3>Special</h3>
+                <div class="row"><label>斜体</label><input type="range" id="skew" min="-40" max="40" value="0" oninput="updateAll()"></div>
+                <div class="row"><label>ネオン</label><input type="checkbox" id="useNeon" onchange="updateAll()"> <input type="color" id="neonColor" value="#5865f2" oninput="updateAll()"></div>
+                <div class="row"><label>質感</label>
+                    <select id="texture" onchange="updateAll()">
+                        <option value="none">なし</option>
+                        <option value="noise">ザラザラ</option>
+                        <option value="gloss">光沢</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <div id="tab-craft" class="tab-content hidden">
+        <div id="tab-craft" class="hidden">
             <div class="card">
-                <h3>Craftsman Mode</h3>
-                <p style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">
-                    右のキャンバス上で文字をドラッグ移動できます。
-                </p>
+                <h3>職人モード</h3>
+                <p style="font-size:0.7rem; color:var(--muted);">キャンバス上の文字を直接ドラッグできます。</p>
                 <div class="char-grid" id="charGrid"></div>
-                
-                <div class="btn-row">
-                    <button class="btn btn-blue" onclick="copyToAll()">全文字にコピー</button>
-                    <button class="btn btn-gray" onclick="randomize()">ランダム配置</button>
-                </div>
+                <button class="btn btn-gray" onclick="copyFirstToAll()">1文字目の設定を全適用</button>
             </div>
+            <div id="charDetail" class="card" style="opacity:0.5; pointer-events:none;">
+                <h3 id="selectedCharLabel">個別設定</h3>
+                <div class="row"><label>回転</label><input type="range" id="c_rot" min="-180" max="180" value="0" oninput="updateCharProp()"></div>
+                <div class="row"><label>拡大</label><input type="range" id="c_scale" min="0.5" max="2.5" step="0.1" value="1" oninput="updateCharProp()"></div>
+                <div class="row"><label>個別色</label><input type="checkbox" id="c_useCol" onchange="updateCharProp()"> <input type="color" id="c_col" value="#ff0000" oninput="updateCharProp()"></div>
+            </div>
+        </div>
 
-            <div class="card" id="charDetail" style="opacity:0.5; pointer-events:none;">
-                <h3>Individual: <span id="selCharName">-</span></h3>
-                <div class="row">
-                    <label>個別フォント</label>
-                    <input type="checkbox" id="c_useFont">
-                </div>
-                <div class="row">
-                    <select id="c_font" disabled>
-                        <option value="'Dela Gothic One'">Dela Gothic</option>
-                        <option value="'Yuji Syuku'">明朝</option>
-                        <option value="'RocknRoll One'">RocknRoll</option>
-                        <option value="'Reggae One'">Reggae</option>
-                    </select>
-                </div>
-                <div class="row"><label>サイズ倍率</label><input type="range" id="c_scale" min="0.5" max="3.0" step="0.1" value="1.0"></div>
-                <div class="row"><label>回転</label><input type="range" id="c_rot" min="-180" max="180" value="0"></div>
-                <div class="row"><label>個別色</label><input type="checkbox" id="c_useCol"><input type="color" id="c_col"></div>
+        <div id="tab-batch" class="hidden">
+            <div class="card">
+                <h3>一括生成</h3>
+                <textarea id="batchInput" style="height:120px; font-size:1rem;" placeholder="1行ずつ入力&#10;神&#10;草&#10;最強"></textarea>
+                <button class="btn btn-green" onclick="runBatch()">一括ダウンロード開始</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Template</h3>
+            <div class="row">
+                <button class="btn btn-gray" onclick="saveTemplate()">保存</button>
+                <button class="btn btn-gray" onclick="loadTemplate()">読込</button>
             </div>
         </div>
     </div>
 </div>
 
 <div class="main">
-    <div id="canvasWrapper" class="canvas-area">
+    <div id="canvasWrapper" class="canvas-container">
         <canvas id="canvas" width="128" height="128"></canvas>
     </div>
     
-    <div class="discord-mock">
-        <div style="width:35px; height:35px; background:var(--accent); border-radius:50%;"></div>
+    <div class="preview-box">
+        <div class="avatar"></div>
         <div>
-            <div style="font-weight:bold; font-size:0.9rem; margin-bottom:4px;">User <span style="font-size:0.7rem; color:#aaa;">Today 12:34</span></div>
-            <img id="previewImg" style="width:48px; height:48px; object-fit:contain;">
+            <div style="font-weight:bold; font-size:0.9rem;">Preview <span style="font-weight:normal; color:#aaa; font-size:0.7rem;">Today at 12:00</span></div>
+            <img id="previewImg" style="width:48px; height:48px; object-fit:contain; margin-top:5px;">
         </div>
     </div>
 
-    <button class="btn btn-green" id="dlBtn" style="width:300px; margin-top:20px;">画像を保存 (PNG)</button>
+    <button class="btn btn-green" style="width:300px; margin-top:20px;" onclick="downloadSingle()">PNGを保存</button>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const wrapper = document.getElementById('canvasWrapper');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let strokes = [{color:'#000000', width:6}, {color:'#ffffff', width:10}];
+    let charStyles = [];
+    let selectedIdx = -1;
+    let dragInfo = { active: false, idx: -1, startX: 0, startY: 0 };
 
-// State
-let state = {
-    text: "超\n強化",
-    font: "'Dela Gothic One'",
-    weight: 900,
-    size: 120, lineHeight: 0.9, skew: 0,
-    colors: ['#FFFFFF', '#00AAFF', '#0055FF'], rainbow: false, angle: 90,
-    bg: { type: 'none', color: '#000000', pad: 10 },
-    texture: { mode: 'none', strength: 50 },
-    neon: { on: false, color: '#ff0055', blur: 20 },
-    strokes: [
-        { color: '#000000', width: 6 },
-        { color: '#FFFFFF', width: 10 }
-    ],
-    chars: [] // {x, y, rot, scale, font, color, ...}
-};
-
-let currentTab = 'main';
-let selectedCharIdx = -1;
-let dragInfo = { active: false, idx: -1, startX: 0, startY: 0 };
-let lastAutoScale = 1; // マウス座標計算用
-
-// --- Init & UI Bindings ---
-function init() {
-    renderStrokes();
-    updateCharList();
-    draw();
-
-    // Inputs
-    bind('textInput', v => { state.text = v; updateCharList(); draw(); });
-    bind('fontFamily', v => { if(v==='custom') document.getElementById('fontFile').click(); else {state.font=v; draw();} });
-    document.getElementById('fontFile').onchange = loadFont;
-    bind('fontWeight', v => { state.weight = v; draw(); });
-
-    // Color
-    bind('useRainbow', v => { state.rainbow = v; draw(); }, 'check');
-    bind('col1', v => { state.colors[0] = v; draw(); });
-    bind('col2', v => { state.colors[1] = v; draw(); });
-    bind('col3', v => { state.colors[2] = v; draw(); });
-    bind('gradAngle', v => { state.angle = v; draw(); });
-
-    // Layout
-    bind('globalSize', v => { state.size = parseInt(v); draw(); });
-    bind('lineHeight', v => { state.lineHeight = parseFloat(v); draw(); });
-    bind('skew', v => { state.skew = parseInt(v); draw(); });
-
-    // Style
-    bind('bgType', v => { state.bg.type = v; draw(); });
-    bind('bgColor', v => { state.bg.color = v; draw(); });
-    bind('bgPad', v => { state.bg.pad = parseInt(v); draw(); });
-    bind('textureMode', v => { state.texture.mode = v; draw(); });
-    bind('texStrength', v => { state.texture.strength = parseInt(v); draw(); });
-    bind('useNeon', v => { state.neon.on = v; draw(); }, 'check');
-    bind('neonColor', v => { state.neon.color = v; draw(); });
-    bind('neonBlur', v => { state.neon.blur = parseInt(v); draw(); });
-
-    // Craft
-    bind('c_scale', v => setCharProp('scale', parseFloat(v)));
-    bind('c_rot', v => setCharProp('rot', parseInt(v)));
-    bind('c_useFont', v => {
-        setCharProp('useFont', v);
-        document.getElementById('c_font').disabled = !v;
-    }, 'check');
-    bind('c_font', v => setCharProp('font', v));
-    bind('c_useCol', v => setCharProp('useCol', v), 'check');
-    bind('c_col', v => setCharProp('color', v));
-
-    // Mouse Events for Drag
-    canvas.addEventListener('mousedown', onMouseDown);
-    canvas.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
-    
-    // Touch Events
-    canvas.addEventListener('touchstart', e => onMouseDown(e.touches[0]));
-    canvas.addEventListener('touchmove', e => { e.preventDefault(); onMouseMove(e.touches[0]); });
-    window.addEventListener('touchend', onMouseUp);
-    
-    // DL
-    document.getElementById('dlBtn').onclick = () => {
-        const a = document.createElement('a');
-        a.href = canvas.toDataURL();
-        a.download = `emoji_${Date.now()}.png`;
-        a.click();
-    };
-}
-
-function bind(id, func, type='val') {
-    document.getElementById(id).addEventListener('input', e => {
-        func(type==='check' ? e.target.checked : e.target.value);
-    });
-}
-
-function setTab(t) {
-    currentTab = t;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-    document.getElementById(`tab-${t}`).classList.remove('hidden');
-
-    if (t === 'craft') {
-        wrapper.classList.add('interactive');
-        updateCharList();
-    } else {
-        wrapper.classList.remove('interactive');
+    // --- Core Logic ---
+    function updateAll() {
+        // フォントが読み込まれるのを待ってから描画
+        document.fonts.ready.then(() => draw());
     }
-}
 
-function loadFont(e) {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-        const f = new FontFace('Custom', ev.target.result);
-        f.load().then(l => {
-            document.fonts.add(l);
-            const s = document.getElementById('fontFamily');
-            s.innerHTML = `<option value="Custom">📂 ${file.name}</option>` + s.innerHTML;
-            s.value = "Custom";
-            state.font = "Custom";
-            draw();
+    function draw() {
+        ctx.clearRect(0, 0, 128, 128);
+        const text = document.getElementById('textInput').value;
+        const lines = text.split('\n');
+        const fontSize = parseInt(document.getElementById('globalSize').value);
+        const font = document.getElementById('fontFamily').value;
+        const lh = parseFloat(document.getElementById('lineHeight').value);
+        const skew = parseInt(document.getElementById('skew').value) * Math.PI / 180;
+
+        ctx.font = `900 ${fontSize}px ${font}`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.lineJoin = 'round';
+
+        // Get max width for auto-scale
+        let maxW = 0;
+        lines.forEach(l => {
+            const w = ctx.measureText(l).width + Math.abs(fontSize * Math.tan(skew));
+            if(w > maxW) maxW = w;
         });
-    };
-    reader.readAsArrayBuffer(file);
-}
 
-// --- Char Management ---
-function updateCharList() {
-    const chars = Array.from(state.text.replace(/\n/g, ''));
-    const grid = document.getElementById('charGrid');
-    grid.innerHTML = '';
-    
-    // Resize state array
-    while(state.chars.length < chars.length) state.chars.push(createDefaultCharState());
+        const strokePadding = strokes.reduce((a, b) => a + b.width, 0) * 2;
+        const scale = Math.min(120 / (maxW + strokePadding), 120 / (lines.length * fontSize * lh + strokePadding), 1.0);
 
-    chars.forEach((c, i) => {
-        const btn = document.createElement('div');
-        btn.className = `char-btn ${selectedCharIdx === i ? 'selected' : ''}`;
-        btn.innerText = c;
-        btn.onclick = () => selectChar(i);
-        grid.appendChild(btn);
-    });
-}
+        ctx.save();
+        ctx.translate(64, 64);
+        ctx.scale(scale, scale);
 
-function createDefaultCharState() {
-    return { x:0, y:0, scale:1, rot:0, useFont:false, font:"'Dela Gothic One'", useCol:false, color:'#ff0000' };
-}
+        const drawText = (mode, sIdx) => {
+            let cCount = 0;
+            lines.forEach((line, li) => {
+                const chars = Array.from(line);
+                const lineW = ctx.measureText(line).width;
+                let curX = -lineW / 2;
+                const curY = (li - (lines.length - 1) / 2) * (fontSize * lh);
 
-function selectChar(i) {
-    selectedCharIdx = i;
-    updateCharList();
-    const c = state.chars[i];
-    const card = document.getElementById('charDetail');
-    card.style.opacity = 1; card.style.pointerEvents = 'auto';
-    document.getElementById('selCharName').innerText = `「${state.text.replace(/\n/g,'')[i]}」`;
-    
-    document.getElementById('c_scale').value = c.scale;
-    document.getElementById('c_rot').value = c.rot;
-    document.getElementById('c_useFont').checked = c.useFont;
-    document.getElementById('c_font').value = c.font;
-    document.getElementById('c_font').disabled = !c.useFont;
-    document.getElementById('c_useCol').checked = c.useCol;
-    document.getElementById('c_col').value = c.color;
-}
+                chars.forEach(char => {
+                    const cw = ctx.measureText(char).width;
+                    const style = charStyles[cCount] || {x:0, y:0, rot:0, scale:1};
+                    
+                    ctx.save();
+                    ctx.translate(curX + cw/2 + (style.x||0), curY + (style.y||0));
+                    ctx.transform(1, 0, Math.tan(skew), 1, 0, 0);
+                    ctx.rotate((style.rot||0) * Math.PI / 180);
+                    ctx.scale(style.scale||1, style.scale||1);
 
-function setCharProp(k, v) {
-    if(selectedCharIdx < 0) return;
-    state.chars[selectedCharIdx][k] = v;
-    draw();
-}
+                    if(mode === 'neon' && document.getElementById('useNeon').checked) {
+                        ctx.shadowColor = document.getElementById('neonColor').value;
+                        ctx.shadowBlur = 15;
+                        ctx.fillStyle = ctx.shadowColor;
+                        ctx.fillText(char, 0, 0);
+                    } else if(mode === 'stroke') {
+                        let totalW = 0;
+                        for(let i=0; i<=sIdx; i++) totalW += strokes[i].width;
+                        ctx.strokeStyle = strokes[sIdx].color;
+                        ctx.lineWidth = totalW * 2;
+                        ctx.strokeText(char, 0, 0);
+                    } else if(mode === 'fill') {
+                        if(style.useCol) {
+                            ctx.fillStyle = style.col;
+                        } else {
+                            const grad = ctx.createLinearGradient(0, -fontSize/2, 0, fontSize/2);
+                            grad.addColorStop(0, document.getElementById('col1').value);
+                            grad.addColorStop(1, document.getElementById('col2').value);
+                            ctx.fillStyle = grad;
+                        }
+                        ctx.fillText(char, 0, 0);
+                    }
+                    ctx.restore();
+                    curX += cw;
+                    cCount++;
+                });
+            });
+        };
 
-function copyToAll() {
-    if(selectedCharIdx < 0) return;
-    const src = state.chars[selectedCharIdx];
-    state.chars.forEach((c, i) => {
-        if(i !== selectedCharIdx) Object.assign(c, src);
-    });
-    draw();
-}
+        if(document.getElementById('useNeon').checked) drawText('neon');
+        for(let i=strokes.length-1; i>=0; i--) drawText('stroke', i);
+        drawText('fill');
+        ctx.restore();
 
-function randomize() {
-    state.chars.forEach(c => {
-        c.x = (Math.random()-0.5) * 40;
-        c.y = (Math.random()-0.5) * 40;
-        c.rot = (Math.random()-0.5) * 60;
-        c.scale = 0.8 + Math.random() * 0.5;
-    });
-    draw();
-    selectChar(selectedCharIdx); // UI update
-}
-
-// --- Strokes ---
-function renderStrokes() {
-    const list = document.getElementById('strokeList');
-    list.innerHTML = '';
-    state.strokes.forEach((s, i) => {
-        const d = document.createElement('div');
-        d.className = 'row';
-        d.style.background='#222'; d.style.padding='5px'; d.style.borderRadius='4px';
-        d.innerHTML = `
-            <span style="font-size:0.7rem;">#${i+1}</span>
-            <input type="color" value="${s.color}" oninput="state.strokes[${i}].color=this.value; draw()">
-            <input type="range" max="40" value="${s.width}" oninput="state.strokes[${i}].width=parseInt(this.value); draw()">
-            <button class="btn-red" onclick="state.strokes.splice(${i},1); renderStrokes(); draw()">×</button>
-        `;
-        list.appendChild(d);
-    });
-}
-window.addStroke = () => { state.strokes.unshift({color:'#ffffff', width:8}); renderStrokes(); draw(); };
-
-// --- Drawing Core ---
-function draw() {
-    ctx.clearRect(0, 0, 128, 128);
-    const lines = state.text.split('\n');
-    
-    // 1. Calculate Bounding Box (Auto Fit)
-    // 実際には全文字の座標変換後の位置を計算すべきだが、重いので
-    // 「標準レイアウト + ストローク幅」からスケールを逆算する
-    ctx.font = `${state.weight} ${state.size}px ${state.font}`;
-    let maxW = 0;
-    lines.forEach(l => {
-        const w = ctx.measureText(l).width;
-        // Skew分を加味
-        const skewW = Math.abs(state.size * Math.tan(state.skew * Math.PI/180));
-        if(w + skewW > maxW) maxW = w + skewW;
-    });
-    
-    // 背景のパッド、ネオン、ストロークを考慮
-    let padding = state.bg.pad + (state.neon.on ? state.neon.blur : 0);
-    state.strokes.forEach(s => padding += s.width);
-    
-    const contentW = maxW + padding * 2;
-    const contentH = (lines.length * state.size * state.lineHeight) + padding * 2;
-    
-    // 128pxに収める
-    lastAutoScale = Math.min(128 / contentW, 128 / contentH, 1.0);
-    
-    ctx.save();
-    ctx.translate(64, 64);
-    ctx.scale(lastAutoScale, lastAutoScale);
-
-    // 背景 (Zabuton)
-    if(state.bg.type !== 'none') drawZabuton(contentW, contentH);
-
-    // 文字描画準備
-    const blockH = lines.length * state.size * state.lineHeight;
-    const startY = -(blockH / 2) + (state.size * state.lineHeight / 2);
-
-    // レイヤー順: Neon -> Stroke(Outer->Inner) -> Fill -> Texture
-    if(state.neon.on) drawTextLayer('neon', lines, startY);
-    for(let i=state.strokes.length-1; i>=0; i--) drawTextLayer('stroke', lines, startY, i);
-    drawTextLayer('fill', lines, startY);
-
-    ctx.restore();
-    
-    // Texture Overlay (Composite)
-    if(state.texture.mode !== 'none') applyTexture();
-
-    document.getElementById('previewImg').src = canvas.toDataURL();
-}
-
-function drawZabuton(w, h) {
-    ctx.fillStyle = state.bg.color;
-    const hw = w/2 - 5; // 微調整
-    const hh = h/2 - 5;
-    ctx.beginPath();
-    
-    if(state.bg.type === 'rect') ctx.rect(-hw, -hh, w-10, h-10);
-    else if(state.bg.type === 'round') ctx.roundRect(-hw, -hh, w-10, h-10, 20);
-    else if(state.bg.type === 'circle') ctx.arc(0, 0, Math.max(w,h)/2 - 5, 0, Math.PI*2);
-    else if(state.bg.type === 'burst') {
-        for(let i=0; i<20; i++) {
-            const angle = (i/20)*Math.PI*2;
-            ctx.lineTo(Math.cos(angle)*w/1.5, Math.sin(angle)*h/1.5);
-            ctx.lineTo(Math.cos(angle+0.1)*w/3, Math.sin(angle+0.1)*h/3);
-        }
-    }
-    ctx.fill();
-}
-
-function drawTextLayer(mode, lines, startY, strokeIdx = -1) {
-    let charCount = 0;
-    lines.forEach((line, li) => {
-        const totalW = ctx.measureText(line).width; // 簡易計算
-        let cx = -totalW / 2;
-        
-        Array.from(line).forEach((char) => {
-            const cw = ctx.measureText(char).width;
-            const cy = startY + (li * state.size * state.lineHeight);
-            const cInfo = state.chars[charCount] || createDefaultCharState();
-            
-            // Transform
-            ctx.save();
-            ctx.translate(cx + cw/2 + cInfo.x, cy + cInfo.y);
-            ctx.rotate((state.skew * Math.PI/180) / 2); // 全体斜体
-            ctx.transform(1, 0, Math.tan(state.skew * Math.PI/180), 1, 0, 0);
-            
-            ctx.rotate(cInfo.rot * Math.PI/180);
-            ctx.scale(cInfo.scale, cInfo.scale);
-
-            // Font setting
-            const fFamily = cInfo.useFont ? cInfo.font : state.font;
-            ctx.font = `${state.weight} ${state.size}px ${fFamily}`;
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.lineJoin = 'round'; ctx.miterLimit = 2;
-
-            if (mode === 'neon') {
-                ctx.shadowColor = state.neon.color;
-                ctx.shadowBlur = state.neon.blur;
-                ctx.fillStyle = state.neon.color;
-                ctx.fillText(char, 0, 0);
-            } else if (mode === 'stroke') {
-                let w = 0;
-                for(let k=0; k<=strokeIdx; k++) w += state.strokes[k].width;
-                ctx.strokeStyle = state.strokes[strokeIdx].color;
-                ctx.lineWidth = w * 2;
-                ctx.strokeText(char, 0, 0);
-            } else if (mode === 'fill') {
-                if (cInfo.useCol) {
-                    ctx.fillStyle = cInfo.color;
-                } else if (state.rainbow) {
-                    ctx.fillStyle = `hsl(${(charCount * 40) % 360}, 100%, 50%)`;
-                } else {
-                    const g = ctx.createLinearGradient(0, -state.size/2, 0, state.size/2);
-                    g.addColorStop(0, state.colors[0]);
-                    g.addColorStop(0.5, state.colors[1]);
-                    g.addColorStop(1, state.colors[2]);
-                    ctx.fillStyle = g;
-                }
-                ctx.fillText(char, 0, 0);
+        // Texture
+        const tex = document.getElementById('texture').value;
+        if(tex !== 'none') {
+            ctx.save(); ctx.globalCompositeOperation = 'source-atop'; ctx.globalAlpha = 0.3;
+            if(tex === 'noise') {
+                for(let i=0; i<1000; i++) { ctx.fillStyle=Math.random()>0.5?'#fff':'#000'; ctx.fillRect(Math.random()*128, Math.random()*128, 1, 1); }
+            } else {
+                const g = ctx.createLinearGradient(0,0,128,128); g.addColorStop(0,'#fff'); g.addColorStop(1,'transparent');
+                ctx.fillStyle=g; ctx.fillRect(0,0,128,128);
             }
             ctx.restore();
-            cx += cw;
-            charCount++;
-        });
-    });
-}
-
-function applyTexture() {
-    ctx.save();
-    ctx.globalCompositeOperation = 'source-atop'; // 文字の上だけに描画
-    ctx.globalAlpha = state.texture.strength / 100;
-    
-    if (state.texture.mode === 'noise') {
-        for(let i=0; i<5000; i++) {
-            ctx.fillStyle = Math.random()>0.5 ? '#fff' : '#000';
-            ctx.fillRect(Math.random()*128, Math.random()*128, 1, 1);
         }
-    } else if (state.texture.mode === 'line') {
-        ctx.fillStyle = '#000';
-        for(let y=0; y<128; y+=2) ctx.fillRect(0, y, 128, 1);
-    } else if (state.texture.mode === 'gloss') {
-        const g = ctx.createLinearGradient(0, 0, 128, 128);
-        g.addColorStop(0, 'rgba(255,255,255,0.8)');
-        g.addColorStop(0.5, 'rgba(255,255,255,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(0,0,128,128);
-    } else if (state.texture.mode === 'grunge') {
-        // 簡易グランジ
-        ctx.fillStyle = '#000';
-        for(let i=0; i<300; i++) {
-            const w = Math.random()*10;
-            ctx.fillRect(Math.random()*128, Math.random()*128, w, 1);
-        }
+
+        document.getElementById('previewImg').src = canvas.toDataURL();
     }
-    ctx.restore();
-}
 
-function toggleRainbow(el) {
-    document.getElementById('gradControls').style.opacity = el.checked ? 0.3 : 1;
-    document.getElementById('gradControls').style.pointerEvents = el.checked ? 'none' : 'auto';
-}
+    // --- UI/Interactions ---
+    function switchTab(t) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        ['main', 'craft', 'batch'].forEach(id => document.getElementById('tab-'+id).classList.add('hidden'));
+        document.getElementById('tab-'+t).classList.remove('hidden');
+        document.getElementById('canvasWrapper').className = 'canvas-container' + (t==='craft'?' craft-active':'');
+        if(t === 'craft') refreshCharGrid();
+    }
 
-// --- Interaction (Drag) ---
-function onMouseDown(e) {
-    if(currentTab !== 'craft') return;
-    const rect = canvas.getBoundingClientRect();
-    // マウス座標をキャンバス内部座標(0-128)に変換
-    const mx = (e.clientX - rect.left) / rect.width * 128;
-    const my = (e.clientY - rect.top) / rect.height * 128;
-
-    // 中心座標(64,64)からの相対位置
-    const rx = (mx - 64) / lastAutoScale;
-    const ry = (my - 64) / lastAutoScale;
-
-    // 当たり判定 (簡易: 一番近い文字を選択)
-    // 厳密には各文字の描画位置を記憶すべきだが、簡易的に距離で判定
-    let minDist = 999;
-    let targetIdx = -1;
-    
-    // 現在の文字配置をシミュレート
-    const lines = state.text.split('\n');
-    let charCount = 0;
-    const blockH = lines.length * state.size * state.lineHeight;
-    const startY = -(blockH / 2) + (state.size * state.lineHeight / 2);
-    
-    lines.forEach((line, li) => {
-        const totalW = ctx.measureText(line).width; 
-        let cx = -totalW / 2;
-        Array.from(line).forEach(char => {
-            const cw = ctx.measureText(char).width;
-            const cInfo = state.chars[charCount] || createDefaultCharState();
-            // 文字の中心
-            const centerX = cx + cw/2 + cInfo.x;
-            const centerY = startY + (li * state.size * state.lineHeight) + cInfo.y;
-            
-            const dist = Math.sqrt((rx - centerX)**2 + (ry - centerY)**2);
-            if(dist < (state.size/2)) { // 文字半径以内なら
-                if(dist < minDist) { minDist = dist; targetIdx = charCount; }
-            }
-            cx += cw;
-            charCount++;
+    function refreshCharGrid() {
+        const grid = document.getElementById('charGrid'); grid.innerHTML = '';
+        const chars = Array.from(document.getElementById('textInput').value.replace(/\n/g,''));
+        chars.forEach((c, i) => {
+            const b = document.createElement('div'); b.className = 'char-btn' + (selectedIdx===i?' selected':'');
+            b.innerText = c; b.onclick = () => selectChar(i);
+            grid.appendChild(b);
         });
-    });
-
-    if(targetIdx !== -1) {
-        selectChar(targetIdx);
-        dragInfo = { active: true, idx: targetIdx, startX: rx, startY: ry, 
-                     baseX: state.chars[targetIdx].x, baseY: state.chars[targetIdx].y };
     }
-}
 
-function onMouseMove(e) {
-    if(!dragInfo.active) return;
-    const rect = canvas.getBoundingClientRect();
-    const mx = (e.clientX - rect.left) / rect.width * 128;
-    const my = (e.clientY - rect.top) / rect.height * 128;
-    const rx = (mx - 64) / lastAutoScale;
-    const ry = (my - 64) / lastAutoScale;
+    function selectChar(i) {
+        selectedIdx = i; refreshCharGrid();
+        const d = document.getElementById('charDetail'); d.style.opacity = 1; d.style.pointerEvents = 'auto';
+        const s = charStyles[i] || {rot:0, scale:1, useCol:false, col:'#ff0000'};
+        document.getElementById('c_rot').value = s.rot;
+        document.getElementById('c_scale').value = s.scale;
+        document.getElementById('c_useCol').checked = s.useCol;
+        document.getElementById('c_col').value = s.col;
+    }
 
-    state.chars[dragInfo.idx].x = dragInfo.baseX + (rx - dragInfo.startX);
-    state.chars[dragInfo.idx].y = dragInfo.baseY + (ry - dragInfo.startY);
-    draw();
-}
+    function updateCharProp() {
+        if(selectedIdx < 0) return;
+        charStyles[selectedIdx] = {
+            x: charStyles[selectedIdx]?.x || 0, y: charStyles[selectedIdx]?.y || 0,
+            rot: parseInt(document.getElementById('c_rot').value),
+            scale: parseFloat(document.getElementById('c_scale').value),
+            useCol: document.getElementById('c_useCol').checked,
+            col: document.getElementById('c_col').value
+        };
+        draw();
+    }
 
-function onMouseUp() {
-    dragInfo.active = false;
-}
+    // --- Drag Logic ---
+    canvas.onmousedown = (e) => {
+        if(!document.getElementById('canvasWrapper').classList.contains('craft-active')) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (128 / rect.width);
+        const y = (e.clientY - rect.top) * (128 / rect.height);
+        // Find closest char (simplified)
+        dragInfo = { active: true, idx: selectedIdx >= 0 ? selectedIdx : 0, startX: x, startY: y };
+    };
+    window.onmousemove = (e) => {
+        if(!dragInfo.active) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (128 / rect.width);
+        const y = (e.clientY - rect.top) * (128 / rect.height);
+        if(!charStyles[dragInfo.idx]) charStyles[dragInfo.idx] = {x:0, y:0, rot:0, scale:1};
+        charStyles[dragInfo.idx].x += (x - dragInfo.startX);
+        charStyles[dragInfo.idx].y += (y - dragInfo.startY);
+        dragInfo.startX = x; dragInfo.startY = y;
+        draw();
+    };
+    window.onmouseup = () => dragInfo.active = false;
 
-function resetAll() {
-    if(confirm('リセットしますか？')) location.reload();
-}
+    // --- Batch/Template ---
+    async function runBatch() {
+        const words = document.getElementById('batchInput').value.split('\n').filter(w => w.trim());
+        const originalText = document.getElementById('textInput').value;
+        for(let word of words) {
+            document.getElementById('textInput').value = word;
+            draw();
+            await new Promise(r => setTimeout(r, 300));
+            const link = document.createElement('a');
+            link.download = `emoji_${word}.png`; link.href = canvas.toDataURL(); link.click();
+        }
+        document.getElementById('textInput').value = originalText; draw();
+    }
 
-// Init
-window.onload = init;
+    function downloadSingle() {
+        const link = document.createElement('a');
+        link.download = 'emoji.png'; link.href = canvas.toDataURL(); link.click();
+    }
+
+    function addStroke() {
+        strokes.unshift({color:'#ffffff', width:5}); renderStrokes(); draw();
+    }
+
+    function renderStrokes() {
+        const list = document.getElementById('strokeList'); list.innerHTML = '';
+        strokes.forEach((s, i) => {
+            const d = document.createElement('div'); d.className = 'row'; d.style.background='#222'; d.style.padding='4px';
+            d.innerHTML = `<input type="color" value="${s.color}" oninput="strokes[${i}].color=this.value; draw()">
+                           <input type="range" max="30" value="${s.width}" oninput="strokes[${i}].width=parseInt(this.value); draw()">
+                           <button class="btn-red" onclick="strokes.splice(${i},1); renderStrokes(); draw()">×</button>`;
+            list.appendChild(d);
+        });
+    }
+
+    function loadCustomFont(input) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const f = new FontFace('CustomFont', e.target.result);
+            f.load().then(loaded => {
+                document.fonts.add(loaded);
+                const sel = document.getElementById('fontFamily');
+                sel.innerHTML = `<option value="CustomFont">📂 ${file.name}</option>` + sel.innerHTML;
+                sel.value = "CustomFont"; draw();
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function saveTemplate() {
+        const data = { strokes, charStyles, config: {
+            size: document.getElementById('globalSize').value,
+            col1: document.getElementById('col1').value,
+            col2: document.getElementById('col2').value,
+            skew: document.getElementById('skew').value
+        }};
+        localStorage.setItem('emoji_temp', JSON.stringify(data));
+        alert("保存しました");
+    }
+
+    function loadTemplate() {
+        const data = JSON.parse(localStorage.getItem('emoji_temp'));
+        if(!data) return;
+        strokes = data.strokes; charStyles = data.charStyles;
+        document.getElementById('globalSize').value = data.config.size;
+        document.getElementById('col1').value = data.config.col1;
+        document.getElementById('col2').value = data.config.col2;
+        document.getElementById('skew').value = data.config.skew;
+        renderStrokes(); draw();
+    }
+
+    window.onload = () => { renderStrokes(); updateAll(); };
 </script>
 </body>
 </html>
+
